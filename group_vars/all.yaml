@@ -53,38 +53,6 @@ _lustre:
     ubt24: [ "rk9-freeipa", "ubt24-node06", "ubt24-node07", "ubt24-node08", "ubt24-node09" ]
 
 
-#  lnet:
-#    - { suffix: "@tcp1" }
-#  mgs:
-#    - { dev: "sda", mnt_dir: "/lustre/MGS", node: "{{ hostvars[groups['server'][0]]['ansible_ssh_host'] }}" }
-#  mdts:
-#    - { dev: "sdb", fs: "test_fs1", lnet_suffix: "@tcp1" }
-#  osts:
-#    - { dev: "vdb", fs: "test_fs1", lnet_suffix: "@tcp1" }
-#  client:
-#    - { net2: "{{ hostvars[groups['client'][0]]['ansible_ssh_host'] }}@tcp2" }
-
-
-#lustre_server: "{{ _lustre.mgs.node }}{{ _lustre.lnet.suffix }}"
-
-
-#fs_name: test_fs1
-#lnet_suffix: "@tcp1"
-
-
-#mgsnode: "{{ hostvars[groups['server'][0]]['ansible_host'] }}"
-#mgs: "sdb"
-#mdts:
-#  - "sdc"
-#osts:
-#  - "sdd"
-
-
-# lustre_server: "{{ mgsnode }}{{ lnet_suffix }}"
-# client_net2: "{{ hostvars[groups['client'][0]]['ansible_host'] }}@tcp2"
-# client_net2: "{{ hostvars[groups['client_net2'][0]]['ansible_host'] }}@tcp2"
-
-
 vmware:
   esxi_hostname: "192.168.0.231"
   esxi_username: "root"

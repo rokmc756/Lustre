@@ -18,7 +18,9 @@ _cluster:
     - { dev_prefix: "/dev/mapper", dev: "ost41", phy_dev: "sda", idx_id: "7", fs: "test_fs1", lnet_suffix: "@tcp2", node: "rk94-node08" }
     - { dev_prefix: "/dev/mapper", dev: "ost42", phy_dev: "sdb", idx_id: "8", fs: "test_fs1", lnet_suffix: "@tcp2", node: "rk94-node08" }
   client:
-    - { net2: "{{ hostvars[groups['client'][0]]['ansible_ssh_host'] }}@tcp2" }
+    - { lnet_suffix: "@tcp2", mount_prefix: "/mnt/lustre", fs_name: "test_fs1", mgsnode: "{{ hostvars[groups['mgs'][0]]['ansible_ssh_host'] }}" }
+    # - { net2: "{{ hostvars[groups['client'][0]]['ansible_ssh_host'] }}@tcp2" }
+
 
 lustre_server: "{{ _cluster.mgs[0].node }}{{ _cluster.lnet[0].suffix }}"
 

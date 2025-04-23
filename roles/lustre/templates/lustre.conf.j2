@@ -1,1 +1,4 @@
-lustre
+options lnet networks="tcp0({{ netdev0 }}),tcp2({{ netdev2 }})"
+options ko2iblnd concurrent_sends=7
+options ptlrpc at_max=600
+options ost oss_num_threads=512

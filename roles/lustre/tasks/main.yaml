@@ -57,10 +57,10 @@
   when: ( dir is defined and dir == true ) and inventory_hostname not in groups['client']
 
 
-#- name: Install Lustre Client
-#  import_tasks: install-client.yml
-#  tags: install, setup
-#  when: ( client is defined and client == true ) and inventory_hostname in groups['client']
+- name: Mount Lustre Client
+  import_tasks: mount-client.yml
+  tags: mount, setup
+  when: ( client is defined and client == true ) and inventory_hostname in groups['client']
 
 
 #- name: Install Lustre Server
