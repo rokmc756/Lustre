@@ -1,0 +1,118 @@
+---
+- name: Check OS ( Lustre )
+  fail: msg="{{ ansible_distribution }} is Not Supported!"
+  when: ansible_distribution != 'RedHat' or ansible_distribution != 'CentOS' or ansible_distribution != 'Rocky'
+
+
+- name: Set Facts for Network and Packages Informations
+  import_tasks: set-facts.yml
+  tags: install, uninstall, setup, remove, enable, disable
+
+
+- name: Enable Firewalld
+  import_tasks: ext/enable-firewall.yml
+  tags: enable, setup
+  when: ( firewall is defined and firewall == true )
+
+
+- name: Enable Lustre Pakcage Repo
+  import_tasks: enable-lustre-repo.yml
+  tags: enable, setup
+  when: ( repo is defined and repo == true )
+
+
+- name: Install Lustre Pakcages
+  import_tasks: install-pkgs.yml
+  tags: install, setup
+  when: ( pkgs is defined and pkgs == true )
+
+
+- name: Enable Lustre Network
+  import_tasks: enable-lustre-network.yml
+  tags: enable, setup
+  when: ( network is defined and network == true )
+
+
+- name: Ping Test Lustre Network
+  import_tasks: lnet-ping-test.yml
+  tags: test
+  when: ( network is defined and network == true )
+
+
+- name: Format Lustre Devices
+  import_tasks: format-devices.yml
+  tags: format
+  when: ( fs is defined and fs == true )
+
+
+- name: Mount Lustre Directories
+  import_tasks: mount-dirs.yml
+  tags: mount
+  when: ( dir is defined and dir == true ) and inventory_hostname not in groups['client']
+
+
+- name: Umount Lustre Directories
+  import_tasks: umount-dirs.yml
+  tags: umount
+  when: ( dir is defined and dir == true ) and inventory_hostname not in groups['client']
+
+
+#- name: Install Lustre Client
+#  import_tasks: install-client.yml
+#  tags: install, setup
+#  when: ( client is defined and client == true ) and inventory_hostname in groups['client']
+
+
+#- name: Install Lustre Server
+#  import_tasks: install-server.yml
+#  tags: install, setup
+#  when: ( server is defined and server == true ) and inventory_hostname in groups['server']
+
+
+- name: Disable Lustre Network
+  import_tasks: disable-lustre-network.yml
+  tags: disable, remove
+  when: ( network is defined and network == true )
+
+
+- name: Cleanup Devices
+  import_tasks: cleanup-devices.yml
+  tags: clean
+  when: ( dev is defined and dev == true )
+
+
+
+#- name: Uninstall Lustre Client
+#  import_tasks: uninstall-client.yml
+#  tags: uninstall, remove
+#  when: ( client is defined and client == true ) and inventory_hostname in groups['client']
+
+
+#- name: Uninstall Lustre Server
+#  import_tasks: uninstall-server.yml
+#  tags: uninstall, remove
+#  when: ( server is defined and server == true ) and inventory_hostname in groups['server']
+
+
+- name: Uninstall Lustre Pakcages
+  import_tasks: uninstall-pkgs.yml
+  tags: uninstall, remove
+  when: ( pkgs is defined and pkgs == true )
+
+
+- name: Disable Lustre Pakcage Repo
+  import_tasks: disable-lustre-repo.yml
+  tags: disable, remove
+  when: ( repo is defined and repo == true )
+
+
+- name: Disable Firewalld
+  import_tasks: ext/disable-firewall.yml
+  tags: disable, remove
+  when: ( firewall is defined and firewall == true )
+
+
+#- name: Uninstall Lustre
+#  import_tasks: uninstall.yml
+#  tags: clean, remove, uninstall
+

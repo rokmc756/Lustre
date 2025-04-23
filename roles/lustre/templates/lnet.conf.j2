@@ -1,0 +1,15 @@
+net:
+    - net type: tcp0
+      local NI(s):
+        - nid: {{ ipaddr0 }}@tcp0
+          interfaces:
+              0: {{ netdev0 }}
+    - net type: tcp2
+      local NI(s):
+        - nid: {{ ipaddr2 }}@tcp2
+          interfaces:
+              2: {{ netdev2 }}
+
+routing:
+    - enable: 1
+

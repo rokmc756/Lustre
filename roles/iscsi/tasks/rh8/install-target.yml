@@ -1,0 +1,79 @@
+---
+- name: Install Administration Tools
+  package:
+    name: "{{ item }}"
+    state: present
+  register: install_admintool
+  with_items:
+    - "targetcli"
+- debug: msg={{ install_admintool }}
+
+
+- name: Creates Directory
+  file:
+    path: "{{ item.base_dir }}"
+    state: directory
+    mode: 0755
+  register: create_dir
+  with_items: "{{ _iscsi.target.disks }}"
+- debug: msg={{ create_dir }}
+
+
+- name: Create an Target Disks by TargetCLI
+  shell: |
+    cat << EOF | targetcli
+    cd /backstores/fileio
+    create {{ item.name }} {{ item.base_dir }}/{{ item.name }}.img {{ item.size }}
+    cd /iscsi
+    create {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.name }}
+    cd {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.name }}/tpg1/luns
+    create /backstores/fileio/{{ item.name }}
+    cd ../acls
+    create {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.client }}
+    cd {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.client }}
+    set auth nochap
+    set attribute generate_node_acls=1
+    exit
+    EOF
+  register: create_target_disks
+  with_items: "{{ _iscsi.target.disks }}"
+# set auth userid=iscsiadm
+# set auth password=changeme
+
+
+- name: Install PolicyCoreUtils Package
+  package:
+    name: "{{ item }}"
+    state: present
+  ignore_errors: yes
+  register: install_policycoreutils
+  with_items:
+    - "policycoreutils-python-utils"
+- debug: msg={{ install_policycoreutils }}
+
+
+- name: Reload and Start Target
+  systemd:
+    daemon_reload: yes
+    name: target
+    enabled: yes
+    state: started
+  register: start_target_service
+- debug: msg={{ start_target_service }}
+
+
+#- name: Allow iSCSI Target Service Port
+#  shell: |
+#    firewall-cmd --add-service=iscsi-target --permanent
+#  ignore_errors: true
+#  register: allow_iscsi_target
+#- debug: msg={{ allow_iscsi_target }}
+
+
+#- name: Reload Firewalld
+#  shell: |
+#    firewall-cmd --reload
+#  ignore_errors: true
+#  register: reload_firewalld
+#- debug: msg={{ reload_firewalld }}
+

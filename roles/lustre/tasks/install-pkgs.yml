@@ -1,0 +1,80 @@
+---
+#- name: Install Kernel Headers
+#  yum:
+#    name: "lustre-all-dkms-{{ lustre_version }}"
+#    state: present
+#  register: install_lustre_all_dkms
+#  when: inventory_hostname not in groups['client']
+
+
+- name: Install Lustre Kernel Module
+  yum:
+    name: "kmod-lustre-{{ lustre_version }},kmod-lustre-devel-{{ lustre_version }}"
+    state: present
+  register: install_lustre_kernel_module
+  when: inventory_hostname not in groups['client']
+
+
+- name: Install Lustre Packages
+  yum:
+    name: "lustre-{{ lustre_version }}"
+    state: present
+  register: install_lustre_pkgs
+  when: inventory_hostname not in groups['client']
+
+
+
+- name: Ensure Kernel Headers Available
+  package:
+    name: kernel-devel,epel-release,python3-dnf-plugin-versionlock
+    state: present
+  register: install_kernel_header
+  when: inventory_hostname in groups['client']
+  # EPEL needed to install dkms
+
+
+- name: Install Lustre Client Kernel Module
+  yum:
+    name: "kmod-lustre-client-{{ lustre_version }}"
+    state: present
+  register: install_lustre_client_kmods
+  when: inventory_hostname in groups['client']
+
+
+- name: Install Lustre Client
+  yum:
+    name: "lustre-client-{{ lustre_version }}"
+    state: present
+  register: install_lustre_client
+  when: inventory_hostname in groups['client']
+
+
+- name: Add Lustre Kernel Module
+  modprobe:
+    name: lustre
+    state: present
+
+
+- name: Put SELinux in permissive mode, logging actions that would be blocked.
+  selinux:
+    policy: targeted
+    state: permissive
+
+
+- name: Rebuild Init RAM Disk
+  shell:
+    dracut  -f --regenerate-all
+
+
+- name: Save Lustre Kernel Module
+  template:
+    src: lustre.conf.j2
+    dest: "/etc/modules-load.d/{{ item }}.conf"
+    mode: 0644
+  with_items:
+    - lustre
+
+
+- name: Reboot Hosts to Apply New Kernel
+  import_tasks: ext/reboot-hosts.yml
+

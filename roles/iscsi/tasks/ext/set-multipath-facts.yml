@@ -1,0 +1,40 @@
+---
+- name: Get WWIDs
+  shell: |
+    /lib/udev/scsi_id --whitelisted --replace-whitespace --device=/dev/{{ item.iscsi_dev }}
+  register: get_wwids
+  with_items: "{{ _iscsi.target.disks }}"
+  when: item.client == inventory_hostname
+- debug: msg={{ get_wwids }}
+
+
+- name: Print WWIDs
+  debug: msg={{ item.stdout }}
+  with_items: "{{ get_wwids.results }}"
+  when: item.changed == true
+
+
+- name: Set WWID Fact
+  set_fact:
+    wwids: "{{ (wwids | default([])) + [item.stdout] }}"
+  when: item.changed == true
+  loop: "{{ get_wwids.results }}"
+
+
+- name: Print WWIDs
+  debug: msg={{ item }}
+  with_items: "{{ wwids }}"
+
+
+- name: Set Multipath Alias
+  set_fact:
+    mp_aliases: "{{ (mp_aliases | default([])) + [item.mp_alias] }}"
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Print Multipath Alias
+  debug: msg={{ item }}
+  with_items: "{{ mp_aliases }}"
+
+

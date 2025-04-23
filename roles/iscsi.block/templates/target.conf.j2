@@ -1,0 +1,8 @@
+{% for tn in _iscsi.target %}
+<target {{ tn.iqn }}:{{ tn.os_version }}.{{ tn.disk_name }}>
+    backing-store {{ tn.base_dir }}/{{ tn.disk_name }}.img
+    initiator-name {{ tn.iqn }}:{{ tn.disk_name }}.initiator
+    # Authentication info ( set anyone you like for "username", "password" )
+    # incominguser admin changeme
+</target>
+{% endfor %}

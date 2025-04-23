@@ -1,0 +1,14 @@
+---
+- name: Ensure Mount Directory Exists
+  file:
+    path: "/mnt/lustre/{{ fs_name }}"
+    state: directory
+    recurse: yes
+
+
+# TODO: We should use the built in mount system in ansible
+- name: Mount Lustre Filesystem
+  shell: |
+    mount -t lustre {{ mgsnode }}{{ lnet_suffix }}:/{{ fs_name }} /mnt/lustre/{{ fs_name }}"
+  register: mount_lustrefs
+

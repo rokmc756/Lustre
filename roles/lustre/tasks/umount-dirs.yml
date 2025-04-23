@@ -1,0 +1,55 @@
+---
+- name: Umount OSTs
+  shell: |
+    umount /lustre/{{ item.fs }}/ost/{{ item.dev }}
+  register: command_result
+  ignore_errors: true
+  loop: "{{ _cluster.osts }}"
+  when: ( item.node == inventory_hostname ) and inventory_hostname in groups['oss']
+
+
+- name: Delete OST Mount Directory
+  file:
+    path: /lustre/{{ item.fs }}/ost/{{ item.dev }}
+    state: absent
+  ignore_errors: true
+  loop: "{{ _cluster.osts }}"
+  when: ( item.node == inventory_hostname ) and inventory_hostname in groups['oss']
+
+
+- name: Umount MDTs
+  shell: |
+    umount /lustre/{{ item.fs }}/mdt/{{ item.dev }}
+  register: umount_mdts
+  ignore_errors: true
+  loop: "{{ _cluster.mdts }}"
+  when: ( item.node == inventory_hostname ) and ( inventory_hostname in groups['mds'] or inventory_hostname in groups['dne'] )
+
+
+- name: Delete MDT Mount Directory
+  file:
+    path: /lustre/{{ item.fs }}/mdt/{{ item.dev }}
+    state: absent
+  ignore_errors: true
+  loop: "{{ _cluster.mdts }}"
+  when: ( item.node == inventory_hostname ) and ( inventory_hostname in groups['mds'] or inventory_hostname in groups['dne'] )
+
+
+- name: Umount MGSs
+  shell: |
+    umount {{ item.mnt_dir }}
+  register: command_result
+  ignore_errors: true
+  loop: "{{ _cluster.mgs }}"
+  when: ( item.node == inventory_hostname ) and inventory_hostname in groups['mgs']
+
+
+- name: Delete MGS Mount Directory
+  file:
+    path: "{{ item.mnt_dir }}"
+    state: absent
+  ignore_errors: true
+  loop: "{{ _cluster.mgs }}"
+  when: ( item.node == inventory_hostname ) and inventory_hostname in groups['mgs']
+
+

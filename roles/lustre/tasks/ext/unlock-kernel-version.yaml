@@ -1,0 +1,6 @@
+---
+- name: Lock Kernel Version
+  shell: |
+    dnf versionlock delete kernel-core-0:5.14.0-427.13.1.el9_4
+  register: lock_kernel_version
+

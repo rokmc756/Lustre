@@ -1,0 +1,51 @@
+---
+- name: Create MGTs Mount Directory
+  file:
+    path: "{{ item.mnt_dir }}"
+    state: directory
+    recurse: yes
+  loop: "{{ _cluster.mgs }}"
+  when: ( item.node == inventory_hostname ) and inventory_hostname in groups['mgs']
+
+
+- name: Mount MGTs Directory
+  shell: |
+    mount -t lustre {{ item.dev_prefix }}/{{ item.dev }} {{ item.mnt_dir }}
+  register: mount_mgts
+  loop: "{{ _cluster.mgs }}"
+  when: ( item.node == inventory_hostname ) and inventory_hostname in groups['mgs']
+
+
+- name: Create MDT Mount Directory
+  file:
+    path: /lustre/{{ item.fs }}/mdt/{{ item.dev }}
+    state: directory
+    recurse: yes
+  loop: "{{ _cluster.mdts }}"
+  when: ( item.node == inventory_hostname ) and ( inventory_hostname in groups['mds'] or inventory_hostname in groups['dne'] )
+
+
+- name: Mount MDTs Directory
+  shell: |
+    mount -t lustre {{ item.dev_prefix }}/{{ item.dev }} /lustre/{{ item.fs }}/mdt/{{ item.dev }}
+  register: mount_mdts
+  loop: "{{ _cluster.mdts }}"
+  when: ( item.node == inventory_hostname ) and ( inventory_hostname in groups['mds'] or inventory_hostname in groups['dne'] )
+
+
+- name: Create OST Mount Directory
+  file:
+    path: /lustre/{{ item.fs }}/ost/{{ item.dev }}
+    state: directory
+    recurse: yes
+  loop: "{{ _cluster.osts }}"
+  when: ( item.node == inventory_hostname ) and inventory_hostname in groups['oss']
+
+
+- name: Mount OSTs Directory
+  shell: |
+    mount -t lustre {{ item.dev_prefix }}/{{ item.dev }} /lustre/{{ item.fs }}/ost/{{ item.dev }}
+  register: mount_osts
+  loop: "{{ _cluster.osts }}"
+  when: ( item.node == inventory_hostname ) and inventory_hostname in groups['oss']
+

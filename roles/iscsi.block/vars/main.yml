@@ -1,0 +1,29 @@
+---
+_iscsi:
+  target:
+    iqn: "iqn.2025-04.com.ddn.jtest"
+    user: "iscsiadm"
+    password: "changeme"
+    os_version: "rk9"
+    disks:
+      - { name: "jtest-vdisk01", base_dir: "/vdisk01/iscsi01", size: "20G", dev_name: vdb, scsi_dev_name: sdb, tpg: 1 }
+      - { name: "jtest-vdisk02", base_dir: "/vdisk01/iscsi02", size: "20G", dev_name: vdc, scsi_dev_name: sdc, tpg: 2 }
+      - { name: "jtest-vdisk03", base_dir: "/vdisk01/iscsi03", size: "20G", dev_name: vdd, scsi_dev_name: sdd, tpg: 3 }
+      - { name: "jtest-vdisk04", base_dir: "/vdisk01/iscsi04", size: "20G", dev_name: vde, scsi_dev_name: sde, tpg: 4 }
+      - { name: "jtest-vdisk05", base_dir: "/vdisk01/iscsi05", size: "20G", dev_name: vdf, scsi_dev_name: sdf, tpg: 5 }
+      - { name: "jtest-vdisk06", base_dir: "/vdisk01/iscsi06", size: "20G", dev_name: vdg, scsi_dev_name: sdg, tpg: 6 }
+      - { name: "jtest-vdisk07", base_dir: "/vdisk01/iscsi07", size: "20G", dev_name: vdh, scsi_dev_name: sdh, tpg: 7 }
+      - { name: "jtest-vdisk08", base_dir: "/vdisk01/iscsi08", size: "20G", dev_name: vdi, scsi_dev_name: sdi, tpg: 8 }
+      - { name: "jtest-vdisk09", base_dir: "/vdisk01/iscsi09", size: "20G", dev_name: vdj, scsi_dev_name: sdj, tpg: 9 }
+      - { name: "jtest-vdisk10", base_dir: "/vdisk01/iscsi10", size: "20G", dev_name: vdk, scsi_dev_name: sdk, tpg: 10 }
+      - { name: "jtest-vdisk11", base_dir: "/vdisk01/iscsi11", size: "20G", dev_name: vdl, scsi_dev_name: sdl, tpg: 11 }
+      - { name: "jtest-vdisk12", base_dir: "/vdisk01/iscsi12", size: "20G", dev_name: vdm, scsi_dev_name: sdm, tpg: 12 }
+      - { name: "jtest-vdisk13", base_dir: "/vdisk01/iscsi13", size: "20G", dev_name: vdn, scsi_dev_name: sdn, tpg: 13 }
+      - { name: "jtest-vdisk14", base_dir: "/vdisk01/iscsi14", size: "20G", dev_name: vdo, scsi_dev_name: sdo, tpg: 14 }
+      - { name: "jtest-vdisk15", base_dir: "/vdisk01/iscsi15", size: "20G", dev_name: vdp, scsi_dev_name: sdp, tpg: 15 }
+      - { name: "jtest-vdisk16", base_dir: "/vdisk01/iscsi16", size: "20G", dev_name: vdq, scsi_dev_name: sdq, tpg: 16 }
+      - { name: "jtest-vdisk17", base_dir: "/vdisk01/iscsi17", size: "20G", dev_name: vdr, scsi_dev_name: sdr, tpg: 17 }
+      - { name: "jtest-vdisk18", base_dir: "/vdisk01/iscsi18", size: "20G", dev_name: vds, scsi_dev_name: sds, tpg: 18 }
+      - { name: "jtest-vdisk19", base_dir: "/vdisk01/iscsi19", size: "20G", dev_name: vdt, scsi_dev_name: sdt, tpg: 19 }
+      - { name: "jtest-vdisk20", base_dir: "/vdisk01/iscsi20", size: "20G", dev_name: vdu, scsi_dev_name: sdu, tpg: 20 }
+

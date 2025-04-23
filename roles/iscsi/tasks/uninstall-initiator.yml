@@ -1,0 +1,119 @@
+---
+- name: Check the Device Name Attached
+  shell: |
+    iscsiadm -m session -P 3 | grep 'Target\|disk' | grep Attached | awk '{print $4}'
+  register: attach_device_name
+  ignore_errors: true
+
+
+- name: Confirm the Established Session
+  shell: |
+    iscsiadm -m session -o show
+  register: confirm_established_session
+  ignore_errors: true
+
+
+- name: Kill iSCSI Session via Path 0
+  shell: |
+    iscsiadm --mode node -T {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.name }} \
+    -p {{ hostvars[groups['iscsi'][0]].ansible_ssh_host }}:3260 -u
+  register: kill_iscsi_path0_session
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+#- name: Kill iSCSI Session via Path 1
+#  shell: |
+#    iscsiadm --mode node -T {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.name }} \
+#    -p {{ hostvars[groups['iscsi'][0]].ansible_ssh_host1 }}:3260 -u
+#  register: kill_iscsi_path1_session
+#  ignore_errors: true
+#  when: item.client == inventory_hostname
+#  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Remove Node to Prevent the Session from Re-Establishing
+  shell: |
+    iscsiadm --mode node -o delete -T {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.name }}
+  register: remove_node_session
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+# command: iscsiadm -m session
+
+
+- name: Delete iSCSI Session Directory to Prevent Re-Establish Connection
+  file:
+    path: "/var/lib/iscsi/nodes/{{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.name }}"
+    state: absent
+  register: delete_iscsi_session_directory
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Delete iSCSI Client Session Directory to Prevent Re-Establish Connection
+  file:
+    path: "/var/lib/iscsi/nodes/{{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.client }}"
+    state: absent
+  register: delete_iscsi_client_session_directory
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Stop and Disable iSCSId
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+  register: stop_iscsid
+  ignore_errors: true
+  until: stop_iscsid is succeeded
+  retries: 3
+  delay: 10
+  with_items:
+    - "iscsid"
+
+
+- name: Delete Config Files of iSCSI Initiator
+  file:
+    path: "{{ item }}"
+    state: absent
+  register: delete_iscsi_initator_config_files
+  ignore_errors: true
+  with_items:
+    - "/etc/iscsi/iscsid.conf"
+    - "/etc/iscsi/initiatorname.iscsi"
+    - "/etc/iscsi/nodes"
+    - "/etc/iscsi/send_targets"
+    - "/var/lib/iscsi/nodes"
+    - "/var/lib/iscsi/send_targets"
+
+
+- name: Uninstall iSCSI Initiator
+  package:
+    name: iscsi-initiator-utils
+    state: absent
+  register: uninstall_iscsi_initiator
+  ignore_errors: true
+
+
+#- name: Stop and Disable Multipathd
+#  systemd:
+#    name: "{{ item }}"
+#    state: stopped
+#  register: stop_multipathd
+#  until: stop_multipathd is succeeded
+#  retries: 3
+#  delay: 10
+#  with_items:
+#    - "multipathd"
+
+
+#- name: Uninstall Multipathd
+#  package:
+#    name: device-mapper-multipath
+#    state: absent
+#  register: uninstall_multipath_pkg
+

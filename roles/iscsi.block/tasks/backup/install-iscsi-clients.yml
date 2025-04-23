@@ -1,0 +1,131 @@
+---
+- name: Install iSCSI Initiator
+  package:
+    name: "{{ iscsi_init_pkg_name }}"
+    state: present
+  register: install_iscsi_initiator
+- debug: msg={{ install_iscsi_initiator }}
+  when: print_debug == true
+
+
+- name: Copy iSCSId Config Files
+  template: src=iscsid.conf.j2 dest=/etc/iscsi/iscsid.conf owner=root group=root mode=644 force=yes
+  register: copy_iscsid_conf
+  with_dict: "{{ _iscsi.clients }}"
+  when: item.value['name'] == inventory_hostname
+- debug: msg={{ copy_iscsid_conf }}
+
+
+- name: Copy iSCSI Initiator Config Files
+  template: src=initiatorname.iscsi.j2 dest=/etc/iscsi/initiatorname.iscsi owner=root group=root mode=644 force=yes
+  register: copy_initiatorname
+  with_dict: "{{ _iscsi.clients }}"
+  when: item.value['name'] == inventory_hostname
+- debug: msg={{ copy_initiatorname }}
+
+
+- name: Enable and Start iSCSId
+  systemd:
+    name: iscsid
+    state: restarted
+  register: restart_iscsid
+  until: restart_iscsid is succeeded
+  retries: 3
+  delay: 10
+
+
+- name: Discover Target
+  command: iscsiadm -m discovery -t sendtargets -p {{ item.value['target_ip'] }}
+  register: discover_target
+  with_dict: "{{ _iscsi.clients }}"
+  when: item.value['name'] == inventory_hostname
+- debug: msg={{ discover_target }}
+
+
+- name: Confirm Status after Discovery
+  command: iscsiadm -m node -o show
+  register: confirm_discovery_status
+- debug: msg={{ confirm_discovery_status }}
+
+
+- name: Login to the Target
+  command: |
+    iscsiadm --mode node --target {{ item.value['mutual_id'] }} --portal {{ item.value['target_ip'] }}  --login
+  register: login_target
+  with_dict: "{{ _iscsi.clients }}"
+  when: item.value['name'] == inventory_hostname
+- debug: msg={{ login_target }}
+
+
+- name: Check the Device Name Attached
+  shell: |
+    iscsiadm -m session -P 3 | grep 'Target\|disk' | grep Attached | awk '{print $4}'
+  register: attach_device_name
+- debug: msg={{ attach_device_name.stdout }}
+#  command: cat /proc/partitions
+
+
+- name: Install Parted
+  package:
+    name: parted
+    state: present
+  register: install_parted
+- debug: msg={{ install_parted }}
+
+
+- name: "Add new partition /dev/{{ device_name_attached.stdout }}1"
+  parted:
+    device: "/dev/{{ attach_device_name.stdout }}"
+    number: 1
+    flags: [ lvm ]
+    state: present
+  register: add_partition
+- debug: msg={{ add_partition }}
+
+
+- name: Format the Partition
+  filesystem:
+    fstype: xfs
+    dev: "/dev/{{ attach_device_name.stdout }}1"
+  register: format_partition
+- debug: msg={{ format_partition }}
+
+
+- name: Creates Directory for iSCSI Connection
+  file:
+    path: "{{ item.value['mount_dir'] }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+    recurse: yes
+  register: create_directory
+  with_dict: "{{ _iscsi.clients }}"
+  when: item.value['name'] == inventory_hostname
+- debug: msg={{ create_directory }}
+
+
+- name: Mount the Partition
+  mount:
+    fstype: xfs
+    src: "/dev/{{ attach_device_name.stdout }}1"
+    path: "{{ item.value['mount_dir'] }}"
+    state: mounted
+  register: mount_partition
+  with_dict: "{{ _iscsi.clients }}"
+  when: item.value['name'] == inventory_hostname
+- debug: msg={{ mount_partition }}
+
+
+- name: Conditionally Create a File if It Does Not Exist
+  copy:
+    content: "Hellow Ceph iSCSI World!"
+    dest: "{{ item.value['mount_dir'] }}/test-iscsi01.txt"
+    force: no
+    owner: root
+    group: root
+    mode: 0644
+  register: copy_file
+  with_dict: "{{ _iscsi.clients }}"
+  when: item.value['name'] == inventory_hostname
+- debug: msg={{ copy_file }}

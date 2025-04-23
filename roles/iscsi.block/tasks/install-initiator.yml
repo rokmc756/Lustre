@@ -1,0 +1,64 @@
+---
+- name: Install iSCSI Initiator
+  package:
+    name: iscsi-initiator-utils
+    state: present
+  register: install_iscsi_initiator
+- debug: msg={{ install_iscsi_initiator }}
+  when: print_debug == true
+
+
+- name: Copy iSCSId Config Files
+  template: src=iscsid.conf.j2 dest=/etc/iscsi/iscsid.conf owner=root group=root mode=644 force=yes
+  register: copy_iscsid_conf
+- debug: msg={{ copy_iscsid_conf }}
+
+
+- name: Copy iSCSI Initiator Config Files
+  template: src=initiatorname.iscsi.j2 dest=/etc/iscsi/initiatorname.iscsi owner=root group=root mode=644 force=yes
+  register: copy_initiatorname
+- debug: msg={{ copy_initiatorname }}
+
+
+- name: Enable and Start iSCSId
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+  register: restart_iscsid
+  until: restart_iscsid is succeeded
+  retries: 3
+  delay: 10
+  with_items:
+    - "iscsid"
+
+
+- name: Discover Target
+  shell: |
+    iscsiadm -m discovery -t sendtargets -p {{ hostvars[groups['iscsi'][0]].ansible_ssh_host }}
+  register: discover_target
+- debug: msg={{ discover_target }}
+
+
+- name: Confirm Status after Discovery
+  shell: |
+    iscsiadm -m node -o show
+  register: confirm_discovery_status
+- debug: msg={{ confirm_discovery_status }}
+
+
+- name: Login to the Target
+  shell: |
+    iscsiadm --mode node --target {{ _iscsi.target.iqn }}:{{ _iscsi.target.os_version }}.{{ item.name }} \
+    --portal {{ hostvars[groups['iscsi'][0]].ansible_ssh_host }} --login
+  register: login_target
+  with_items: "{{ _iscsi.target.disks }}"
+- debug: msg={{ login_target }}
+
+
+- name: Check the Device Name Attached
+  shell: |
+    iscsiadm -m session -P 3 | grep 'Target\|disk' | grep Attached | awk '{print $4}'
+  register: attach_device_name
+- debug: msg={{ attach_device_name.stdout }}
+#  command: cat /proc/partitions
+

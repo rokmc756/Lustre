@@ -1,0 +1,43 @@
+---
+- name: Unmount the Partition and Remove Entry in /etc/fstab
+  mount:
+    path: "{{ iscsi_disk_base_dir }}/{{inventory_hostname}}_iscsidir"
+    state: "{{ item }}"
+  register: unmount_partition
+  with_items:
+    - "unmounted"
+    - "absent"
+- debug: msg={{ unmount_partition }}
+
+
+- name: Delete directory for iscsi connection
+  file:
+    path: "{{ iscsi_disk_base_dir }}/{{inventory_hostname}}_iscsidir"
+    state: absent
+  register: delete_directory
+- debug: msg={{ delete_directory }}
+
+
+# Remove a Partition from iSCSI Disk
+- parted:
+    device: /dev/sdb
+    number: "1"
+    state: absent
+  register: delete_partition
+- debug: msg={{ delete_partition }}
+
+
+- name: Uninstall Parted
+  yum:
+    name: parted
+    state: absent
+  register: uninstall_parted
+- debug: msg={{ uninstall_parted }}
+
+
+- name: Confirm the partitions
+  shell: |
+    cat /proc/partitions
+  register: confirm_partitions
+- debug: msg={{ confirm_partitions }}
+

@@ -1,0 +1,40 @@
+---
+- name: Disable Lustre Client Repo
+  yum_repository:
+    name: lustre-client
+    state: absent
+  register: disable_lustre_client_repo
+  when: inventory_hostname in groups['client']
+
+
+- name: Delete Lustre Client Repo
+  file:
+    path: /etc/yum.repos.d/lustre-repo.repo
+    state: absent
+  register: delete_lustre_client_repo
+  when: inventory_hostname in groups['client']
+
+
+- name: Disable Lustre e2fs Repo
+  yum_repository:
+    name: e2fsprogs-wc
+    state: absent
+  register: disable_lustre_e2fs_repo
+  when: inventory_hostname not in groups['client']
+
+
+- name: Disable Lustre Server Repo
+  yum_repository:
+    name: lustre-server
+    state: absent
+  register: disable_lustre_server_repo
+  when: inventory_hostname not in groups['client']
+
+
+- name: Delete Lustre Server Repo
+  file:
+    path: /etc/yum.repos.d/lustre-repo.repo
+    state: absent
+  register: delete_lustre_server_repo
+  when: inventory_hostname not in groups['client']
+

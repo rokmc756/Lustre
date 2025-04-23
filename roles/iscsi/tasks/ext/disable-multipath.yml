@@ -1,0 +1,53 @@
+---
+- name: Kill iSCSI Session via Path 1
+  shell: |
+    iscsiadm --mode node -T {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.name }} \
+    -p {{ hostvars[groups['iscsi'][0]].ansible_ssh_host1 }}:3260 -u
+  register: kill_iscsi_path1_session
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Stop Multipath
+  shell: |
+    multipath -f {{ item.mp_alias }}
+  register: stop_multipath
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: force Stop Multipath
+  shell: |
+    multipath -F
+  register: force_stop_multipath
+  ignore_errors: true
+
+
+- name: Stop and Disable Multipathd
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+  register: stop_multipathd
+  until: stop_multipathd is succeeded
+  retries: 3
+  delay: 10
+  with_items:
+    - "multipathd"
+
+
+- name: Uninstall Multipath Package
+  package:
+    name: device-mapper-multipath
+    state: absent
+  register: uninstall_multipath_pkg
+
+
+- name: Delete Multipath Config
+  file:
+    path: /etc/multipath.conf
+    state: absent
+  register: delete_multipath_config
+
+

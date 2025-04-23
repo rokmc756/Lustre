@@ -1,0 +1,73 @@
+---
+- hosts: lustre_server
+  gather_facts: false
+  become: True
+  tasks:
+    - name: Enable Lustre Server Repo
+      yum_repository:
+        name: lustre-server
+        description: lustre-server
+        file: lustre-repo
+        baseurl: https://downloads.whamcloud.com/public/lustre/lustre-{{ lustre_release }}/el7/patchless-ldiskfs-server
+        gpgcheck: no
+
+    - name: Enable Lustre e2fs Repo
+      yum_repository:
+        name: e2fsprogs-wc
+        description: e2fsprogs-wc
+        file: lustre-repo
+        baseurl: https://downloads.whamcloud.com/public/e2fsprogs/latest/el7
+        gpgcheck: no
+
+    - name: Install Lustre Server
+      yum:
+        name: "lustre-{{ lustre_release }}"
+        state: present
+    - name: Put SELinux in permissive mode, logging actions that would be blocked.
+      selinux:
+        policy: targeted
+        state: permissive
+
+
+- hosts: lustre_client
+  gather_facts: false
+  become: True
+  tasks:
+    - name: Enable Lustre Client Repo
+      yum_repository:
+        name: lustre-client
+        description: lustre-client
+        file: lustre-repo
+        baseurl: https://downloads.whamcloud.com/public/lustre/lustre-{{ lustre_release }}/el7/client
+        gpgcheck: no
+
+
+    - name: Ensure Kernel Headers Available
+      package:
+        # EPEL needed to install dkms
+        name: kernel-devel,epel-release
+
+
+    - name: Install Lustre Client DKMS
+      yum:
+        name: "lustre-client-dkms-{{ lustre_release }}"
+        state: present
+
+
+    - name: Install Lustre Client kmods
+      yum:
+        name: "kmod-lustre-client-{{ lustre_release }}"
+        state: present
+
+
+    - name: Install Lustre Client
+      yum:
+        name: "lustre-client-{{ lustre_release }}"
+        state: present
+
+
+    - name: Put SELinux in permissive mode, logging actions that would be blocked.
+      selinux:
+        policy: targeted
+        state: permissive
+

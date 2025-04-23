@@ -1,0 +1,37 @@
+# device-mapper-multipath configuration file
+
+# For a complete list of the default configuration values, run either:
+# # multipath -t
+# or
+# # multipathd show config
+
+# For a list of configuration options with descriptions, see the
+# multipath.conf man page.
+
+
+defaults {
+
+        # find_multipaths yes
+        user_friendly_names no
+        getuid_callout "/lib/udev/scsi_id --whitelisted --replace-whitespace --device=/dev/%n"
+
+}
+
+
+blacklist {
+        devnode "^(ram|raw|loop|fd|md|dm-|sr|scdlst|xvd)[0-0]*"
+        devnode "^hd[a-z]"
+}
+
+
+multipaths {
+{% for mp in mp_aliases|zip(wwids)|list %}
+
+        multipath {
+                wwid {{ mp.1 }}
+                alias {{ mp.0 }}
+        }
+{% endfor %}
+
+}
+

@@ -1,0 +1,41 @@
+[all:vars]
+ssh_key_filename="id_rsa"
+remote_machine_username="jomoon"
+remote_machine_password="changeme"
+
+
+[iscsi]
+rk94-node00 ansible_ssh_host=192.168.2.200 ansible_ssh_host1=192.168.0.200
+rk94-node99 ansible_ssh_host=192.168.2.249
+
+
+[mgs]
+rk94-node01 ansible_ssh_host=192.168.2.201
+
+
+[mds]
+rk94-node02 ansible_ssh_host=192.168.2.202
+
+
+[dne]
+rk94-node03 ansible_ssh_host=192.168.2.203
+rk94-node04 ansible_ssh_host=192.168.2.204
+
+
+[oss]
+rk94-node05 ansible_ssh_host=192.168.2.205
+rk94-node06 ansible_ssh_host=192.168.2.206
+rk94-node07 ansible_ssh_host=192.168.2.207
+rk94-node08 ansible_ssh_host=192.168.2.208
+
+
+[cluster:children]
+mds
+dne
+oss
+
+
+[client]
+rk94-node09 ansible_ssh_host=192.168.2.209
+rk94-node10 ansible_ssh_host=192.168.2.210
+

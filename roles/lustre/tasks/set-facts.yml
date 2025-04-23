@@ -1,0 +1,30 @@
+---
+- name: Get interface name from prefix of IP Addresses provided
+  set_fact:
+    netdev0: "{{ ansible_interfaces | map('regex_replace', '^', 'ansible_') | map('extract', vars) | selectattr('ipv4', 'defined') | selectattr('ipv4.address', 'match', _lustre.net.ipaddr0 ) | map(attribute='device') | first }}"
+    netdev2: "{{ ansible_interfaces | map('regex_replace', '^', 'ansible_') | map('extract', vars) | selectattr('ipv4', 'defined') | selectattr('ipv4.address', 'match', _lustre.net.ipaddr2 ) | map(attribute='device') | first }}"
+
+
+- name: Get IP Address from provided network device name
+  set_fact:
+    ipaddr0: "{{ hostvars[inventory_hostname]['ansible_'~netdev0].ipv4.address }}"
+    ipaddr2: "{{ hostvars[inventory_hostname]['ansible_'~netdev2].ipv4.address }}"
+
+
+- name: Define fact for all worker's first ip addresses
+  set_fact:
+    all_net0_ipaddrs: "{{ groups['all'] | map('extract', hostvars, ['ansible_'~netdev0, 'ipv4', 'address']) | join(',') }}"
+    all_net2_ipaddrs: "{{ groups['all'] | map('extract', hostvars, ['ansible_'~netdev2, 'ipv4', 'address']) | join(',') }}"
+- debug: msg={{ all_net0_ipaddrs }}
+
+
+- name: Set Default Network Device and Address
+  set_fact:
+    _netdev: "ansible_{{ netdev2 }}"
+    _ipaddr: "{{ ipaddr2 }}"
+
+
+- name: Define Fact for Lustre Version
+  set_fact:
+    lustre_version: "{{ _lustre.major_version }}.{{ _lustre.minor_version }}.{{ _lustre.patch_version }}"
+

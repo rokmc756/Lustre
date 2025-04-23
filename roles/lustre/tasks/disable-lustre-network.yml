@@ -1,0 +1,15 @@
+---
+- name: Stop and Disable LNET
+  service:
+    name: lnet
+    state: stopped
+    enabled: false
+  register: disable_lnet
+
+
+- name: Delete LNET Config
+  file:
+    path: /etc/lnet.conf
+    state: absent
+  register: delete_lnet_config
+

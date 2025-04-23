@@ -1,0 +1,120 @@
+---
+- name: Stop and Disable TGTd
+  systemd:
+    name: tgtd
+    state: stopped
+    enabled: no
+    daemon-reload: yes
+  register: stop_tgtd
+  ignore_errors: yes
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+#  until: stop_tgtd is succeeded
+#  retries: 3
+#  delay: 10
+- debug: msg={{ stop_tgtd }}
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+
+
+- name: Stop and Disable iSCSI Target
+  systemd:
+    name: target
+    state: stopped
+    enabled: no
+    daemon-reload: yes
+  register: stop_scsi_target
+  ignore_errors: true
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int >= 8
+- debug: msg={{ stop_scsi_target }}
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int >= 8
+
+
+- name: Disallow iSCSI Target Service Port
+  shell: |
+    firewall-cmd --remove-service=iscsi-target --permanent
+  ignore_errors: true
+  register: disallow_iscsi_target
+- debug: msg={{ disallow_iscsi_target }}
+
+
+- name: Reload Firewalld
+  shell: |
+    firewall-cmd --reload
+  ignore_errors: yes
+  register: reload_firewalld
+- debug: msg={{ reload_firewalld }}
+
+
+- name: Uninstall iSCSI Target Utils Package for Less Version Than RHEL/CentOS/Rocky 8
+  package:
+    name: "{{ item }}"
+    state: absent
+  register: uninstall_scsi_target_utils
+  with_items:
+    - "scsi-target-utils"
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+- debug: msg={{ uninstall_scsi_target_utils }}
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+
+
+- name: Uninstall iSCSI Target Package for Higher Versions Than RHEL/CentOS/Rocky 8
+  pacakge:
+    name: "{{ item }}"
+    state: absent
+  register: uninstall_iscsi_target
+  with_items:
+    - "target"
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int >= 8
+- debug: msg={{ uninstall_iscsi_target }}
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int >= 8
+
+
+- name: Uninstall iSCSI Target Utils Package
+  package:
+    name: "{{ item }}"
+    state: absent
+  ignore_errors: true
+  register: uninstall_policycoreutils
+  with_items:
+    - "policycoreutils-python-utils"
+- debug: msg={{ uninstall_policycoreutils }}
+
+
+- name: Deleted an Added SELinux Context
+  shell: |
+    semanage fcontext -d "{{ iscsi.target.disk_base_dir }}"
+  ignore_errors: true
+  register: delete_selinux_context_disk_dir
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+- debug: msg={{ delete_selinux_context_disk_dir }}
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+
+
+- name: Delete TGTd Config File for Less Version than RHEL/CentOS/Rocky 8
+  file:
+    path: "{{ item }}"
+    state: absent
+  register: delete_tgtd_conf
+  with_items:
+    - "/etc/tgt/conf.d/target.conf"
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+- debug: msg={{ delete_tgtd_conf }}
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+
+
+- name: Delete vDisk Files of TGTd
+  file:
+    path: "{{ iscsi.target.disk_base_dir }}/{{ item }}_vdisk.img"
+    state: absent
+  register: delete_disk_images
+  with_items:
+    - "{{ groups['workers'] }}"
+- debug: msg={{ disk_images_delete }}
+
+
+- name: Delete Directory
+  file:
+    path: "{{ iscsi.target.disk_base_dir }}"
+    state: absent
+  register: delete_dir
+- debug: msg={{ delete_dir }}
+

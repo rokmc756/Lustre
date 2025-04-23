@@ -1,0 +1,34 @@
+---
+- name: Add Lustre Kernel Module
+  modprobe:
+    name: lustre
+    state: present
+
+
+- name: Ensure MGS Has Been Formatted
+  shell: |
+    /usr/sbin/mkfs.lustre --reformat --mgs {{ item.dev_prefix }}/{{ item.dev }}
+  register: format_mgs
+  loop: "{{ _cluster.mgs }}"
+  when: inventory_hostname in groups['mgs']
+
+
+- name: Format MDTs
+  shell: |
+    /usr/sbin/mkfs.lustre --reformat --mdt --fsname={{ item.fs }} --index={{ item.idx_id }} \
+    --mgsnode={{ hostvars[groups['mgs'][0]]['ansible_ssh_host'] }}{{ item.lnet_suffix }} \
+    {{ item.dev_prefix }}/{{ item.dev }}
+  register: format_mdt
+  loop: "{{ _cluster.mdts }}"
+  when: ( item.node == inventory_hostname ) and ( inventory_hostname in groups['mds'] or inventory_hostname in groups['dne'] )
+
+
+- name: Format OSTs
+  shell: |
+    /usr/sbin/mkfs.lustre --reformat --ost --fsname={{ item.fs }} --index={{ item.idx_id }} \
+    --mgsnode={{ hostvars[groups['mgs'][0]]['ansible_ssh_host'] }}{{ item.lnet_suffix }} \
+    {{ item.dev_prefix }}/{{ item.dev }}
+  register: format_ost
+  loop: "{{ _cluster.osts }}"
+  when: ( item.node == inventory_hostname ) and inventory_hostname in groups['oss']
+

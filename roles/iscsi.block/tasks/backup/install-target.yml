@@ -1,0 +1,162 @@
+---
+- name: Install Administration Tools
+  package:
+    name: "{{ item }}"
+    state: present
+  ignore_errors: yes
+  register: admintool_installed
+  with_items:
+    - "scsi-target-utils"
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+- debug: msg={{ install_admintool }}
+
+
+- name: Install Administration Tools
+  package:
+    name: "{{ item }}"
+    state: present
+  register: install_admintool
+  with_items:
+    - "targetcli"
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int >= 8
+- debug: msg={{ install_admintool }}
+
+
+- name: Creates directory
+  file:
+    path: "{{ iscsi.target.disk_base_dir }}"
+    state: directory
+    mode: 0755
+  register: create_dir
+- debug: msg={{ create_dir }}
+
+
+- name: Create an Target Disks by TargetCLI for Higher Version Than RHEL/CentOS/Rocky 8
+  shell: |
+    cat << EOF | targetcli
+    cd /backstores/fileio
+    create {{ item }}_vdisk {{ iscsi_disk_base_dir }}/{{ item }}_vdisk.img 100G
+    cd /iscsi
+    create iqn.2022-12.io.pivotal.jtest:{{ iscsi.target.os_version }}.{{ item }}
+    cd iqn.2022-12.io.pivotal.jtest:{{ iscsi.target.os_version }}.{{ item }}/tpg1/luns
+    create /backstores/fileio/{{ item }}_vdisk
+    cd ../acls
+    create iqn.2022-12.io.pivotal.jtest:{{ item }}.initiator
+    cd iqn.2022-12.io.pivotal.jtest:{{ item }}.initiator
+    set auth userid={{ iscsi.target.user }}
+    set auth password={{ iscsi.target.password }}
+    exit
+    EOF
+  register: create_target_disks
+  with_items:
+    - "{{ groups['workers'] }}"
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int >= 8
+
+
+- name: Create an Disk Images
+  shell: |
+    dd if=/dev/zero of={{ iscsi.target.disk_base_dir }}/{{ item }}_vdisk.img count=0 bs=1 seek=100G"
+  register: create_disk_images
+  with_items:
+    - "{{ groups['workers'] }}"
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+- debug: msg={{ create_disk_images }}
+
+
+- name: Copy TGTd Config File
+  template: src=target.conf.j2 dest=/etc/tgt/conf.d/target.conf owner=root group=root mode=644 force=yes
+  register: copy_tgtd_conf
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+- debug: msg={{ copy_tgtd_conf }}
+
+
+- name: Install PolicyCoreUtils Package
+  package:
+    name: "{{ item }}"
+    state: present
+  ignore_errors: yes
+  register: install_policycoreutils
+  with_items:
+    - "policycoreutils-python-utils"
+- debug: msg={{ install_policycoreutils }}
+
+
+- name: Change SELinux Context
+  shell: |
+    chcon -R -t tgtd_var_lib_t "{{ iscsi.target.disk_base_dir }}"
+  ignore_errors: yes
+  register: change_selinux_chcon
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+- debug: msg={{ change_selinux_chcon }}
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+
+
+- name: Change SELinux Context
+  shell: |
+    semanage fcontext -a -t tgtd_var_lib_t "{{ iscsi.target.disk_base_dir }}"
+  ignore_errors: yes
+  register: selinux_context_changed
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+- debug: msg={{ selinux_context_changed}}
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+
+
+#- name: Start tgtd
+#  shell: |
+#    systemctl eanbled --now tgtd
+#  register: start_tgtd
+#- debug: msg={{ start_tgtd }}
+
+
+- name: Enable and Start TGTd
+  systemd:
+    name: tgtd
+    state: restarted
+    enabled: true
+    daemon-reload: true
+  register: restart_tgtd
+  until: restart_tgtd is succeeded
+  retries: 3
+  delay: 10
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+- debug: msg={{ restart_tgtd }}
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+
+
+- name: Verified the TGTd Status
+  shell: |
+    tgtadm --mode target --op show
+  register: verify_tgtd
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+- debug: msg={{ verify_tgtd }}
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int < 8
+
+
+- name: Reload and Start Target
+  systemd:
+    daemon_reload: yes
+    name: target
+    enabled: yes
+    state: started
+  register: start_target_service
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int >= 8
+- debug: msg={{ start_target_service }}
+  when: hostvars[inventory_hostname].ansible_distribution_major_version|int >= 8
+
+
+- name: Allow iSCSI Target Service Port
+  shell: |
+    firewall-cmd --add-service=iscsi-target --permanent
+  ignore_errors: true
+  register: allow_iscsi_target
+- debug: msg={{ allow_iscsi_target }}
+
+
+- name: Reload Firewalld
+  shell: |
+    firewall-cmd --reload
+  ignore_errors: true
+  register: reload_firewalld
+- debug: msg={{ reload_firewalld }}
+
+

@@ -1,0 +1,70 @@
+---
+- name: Uninstall Lustre Client
+  yum:
+    name: "lustre-client-{{ lustre_version }}"
+    state: absent
+  register: uninstall_lustre_client
+  when: inventory_hostname in groups['client']
+
+
+- name: Uninstall Lustre Client Kernel Modules
+  yum:
+    name: "kmod-lustre-client-{{ lustre_version }}"
+    state: absent
+  register: uninstall_lustre_client_kernel_module
+  when: inventory_hostname in groups['client']
+
+
+#- name: Uninstall Lustre Client DKMS
+#  yum:
+#    name: "lustre-client-dkms-{{ lustre_version }}"
+#    state: absent
+#  register: uninstall_lustre_client_dkms
+#  when: inventory_hostname in groups['client']
+
+
+- name: Remove Kernel Headers Available
+  package:
+    name: kernel-devel
+    state: absent
+  register: uninstall_lustre_client_dkms
+  when: inventory_hostname in groups['client']
+
+
+- name: Uninstall Lustre Packages
+  yum:
+    name: "lustre-{{ lustre_version }}"
+    state: absent
+  register: uninstall_lustre_pkgs
+  when: inventory_hostname not in groups['client']
+
+
+- name: Uninstall Lustre Kernel Module
+  yum:
+    name: "kmod-lustre-{{ lustre_version }},kmod-lustre-devel-{{ lustre_version }}"
+    state: absent
+  register: uninstall_lustre_kernel_module
+  when: inventory_hostname not in groups['client']
+
+
+#- name: Uninstall Lustre All DKMS
+#  yum:
+#    name: "lustre-all-dkms-{{ lustre_version }}"
+#    state: absent
+#  register: uninstall_lustre_all_dkms
+#  when: inventory_hostname not in groups['client']
+
+
+- name: Uninstall Kernel Headers
+  package:
+    name: kernel-devel
+    state: absent
+  register: uninstall_kernel_headers
+  when: inventory_hostname not in groups['client']
+
+
+- name: Remove Lustre Kernel Module
+  modprobe:
+    name: lustre
+    state: absent
+

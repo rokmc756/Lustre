@@ -1,0 +1,57 @@
+---
+- name: Install iSCSI Target In Less Version Than RHEL/Rocky/CentOS 8.x
+  import_tasks: rh7/install-target.yml
+  tags: install, create
+  when:
+    - ( target is defined and target == true ) and inventory_hostname in groups['iscsi']
+    - ( ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Rocky" ) and ansible_distribution_major_version|int < 8
+
+
+- name: Uninstall iSCSI Target In Less Version Than RHEL/Rocky/CentOS 8.x
+  import_tasks: rh7/uninstall-target.yml
+  tags: uninstall, delete
+  when:
+    - ( target is defined and target == true ) and inventory_hostname in groups['iscsi']
+    - ( ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Rocky" ) and ansible_distribution_major_version|int < 8
+
+
+- name: Install iSCSI Target In Higher Version Than RHEL/Rocky/CentOS 8.x
+  import_tasks: rh8/install-target.yml
+  tags: install, create
+  when:
+    - ( target is defined and target == true ) and inventory_hostname in groups['iscsi']
+    - ( ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Rocky" ) and ansible_distribution_major_version|int >= 8
+
+
+- name: Uninstall iSCSI Target In Higher Version Than RHEL/Rocky/CentOS 8.x
+  import_tasks: rh8/uninstall-target.yml
+  tags: uninstall, delete
+  when:
+    - ( target is defined and target == true ) and inventory_hostname in groups['iscsi']
+    - ( ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Rocky" ) and ansible_distribution_major_version|int >= 8
+
+
+- name: Install iSCSI Initiator
+  import_tasks: install-initiator.yml
+  tags: install, create
+  when: ( client is defined and client == true ) and inventory_hostname in groups['cluster']
+
+
+- name: Enable Multipath
+  import_tasks: ext/enable-multipath.yml
+  tags: enable, install, setup
+  when: ( multipath is defined and multipath == true ) and inventory_hostname in groups['cluster']
+
+
+- name: Disable Multipath
+  import_tasks: ext/disable-multipath.yml
+  tags: disable, uninstall, remove
+  when: ( multipath is defined and multipath == true ) and inventory_hostname in groups['cluster']
+
+
+- name: Uninstall iSCSI Initiator
+  import_tasks: uninstall-initiator.yml
+  tags: uninstall, delete
+  when: ( client is defined and client == true ) and inventory_hostname in groups['cluster']
+
+

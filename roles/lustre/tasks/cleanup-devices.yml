@@ -1,0 +1,66 @@
+---
+#- name: Remove Physical Volumes
+#  shell: |
+#    pvremove -y -ff {{ item }}
+#  register: remove_pvs
+#  ignore_errors: true
+#  # when: item.type == "lvmthin"
+#  with_items:
+#    - "/dev/vdb"
+#    - "/dev/sda"
+#    - "/dev/sdb"
+#- debug: msg={{ remove_pvs }}
+## pvremove -y -ff {{ item.storage_dev }}
+
+
+- name: Purge Block Devices
+  shell: |
+    dd if=/dev/zero of={{ item.dev }} bs=4096 count=1 conv=notrunc
+  register: purge_block_devices
+  ignore_errors: true
+  with_items:
+    - "{{ _cluster.mgs }}"
+    - "{{ _cluster.mdts }}"
+    - "{{ _cluster.osts }}"
+- debug: msg={{ purge_block_devices }}
+  # dd if=/dev/zero of={{ item.storage_dev }} bs=4096 count=1 conv=notrunc
+
+
+- name: Wipe Filesystem in NVME Devices
+  shell: |
+    wipefs -a {{ item }}
+  register: wipefs_nvme_devices
+  ignore_errors: true
+  with_items:
+    - "{{ _cluster.mgs }}"
+    - "{{ _cluster.mdts }}"
+    - "{{ _cluster.osts }}"
+- debug: msg={{ wipefs_nvme_devices }}
+#  wipefs -a {{ item.storage_dev }}
+
+
+- name: Delete Zap in NVME Devices
+  shell: |
+    sgdisk --zap-all --delete {{ item }}
+  register: delete_zap_nvme_devices
+  ignore_errors: true
+  with_items:
+    - "{{ _cluster.mgs }}"
+    - "{{ _cluster.mdts }}"
+    - "{{ _cluster.osts }}"
+- debug: msg={{ delete_zap_nvme_devices }}
+# sgdisk --zap-all --delete {{ item.storage_dev }}
+
+
+- name: Discard Block ID
+  shell: |
+    blkdiscard {{ item }}
+  register: discard_block_id
+  ignore_errors: true
+  with_items:
+    - "{{ _cluster.mgs }}"
+    - "{{ _cluster.mdts }}"
+    - "{{ _cluster.osts }}"
+- debug: msg={{ discard_block_id }}
+# blkdiscard {{ item.storage_dev }}
+

@@ -1,0 +1,16 @@
+---
+- name: LNET Ping Test to MGS
+  shell: |
+    lnetctl ping {{ lustre_server }}
+  register: lnet_ping_test_to_mgs
+  changed_when: False
+- debug: msg={{ lnet_ping_test_to_mgs }}
+
+
+- name: LNET Ping Test to Client
+  shell: |
+    lnetctl ping {{ _cluster.client[0].net2 }}
+  register: lnet_ping_test_to_client
+  changed_when: False
+- debug: msg={{ lnet_ping_test_to_client }}
+

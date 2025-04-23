@@ -1,0 +1,64 @@
+---
+# dnf install lustre-ldiskfs-dkms-2.16.1
+#
+
+#- name: Install Lustre Kernel
+#  package:
+#    name: kernel-core-5.14.0-427.31.1_lustre.el9
+#    state: present
+
+
+- name: Ensure Kernel Headers Available
+  package:
+    name: kernel-devel,epel-release,python3-dnf-plugin-versionlock
+    state: present                   # EPEL needed to install dkms
+
+
+#- name: Install Lustre All DKMS
+#  yum:
+#    name: "lustre-all-dkms-{{ lustre_version }}"
+#    state: present
+
+
+#- name: Install Lustre Kernel Module
+#  yum:
+#    name: "kmod-lustre-{{ lustre_version }},kmod-lustre-devel-{{ lustre_version }}"
+#    state: present
+
+
+- name: Install Lustre
+  yum:
+    name: "lustre-{{ lustre_version }}"
+    state: present
+
+
+#- name: Add Lustre Kernel Module
+#  modprobe:
+#    name: lustre
+#    state: present
+
+
+#- name: Put SELinux in permissive mode, logging actions that would be blocked.
+#  selinux:
+#    policy: targeted
+#    state: permissive
+
+
+#- name: Rebuild Init RAM Disk
+#  shell:
+#    dracut  -f --regenerate-all
+
+
+#
+#- name: Save Lustre Kernel Module
+#  template:
+#    src: lustre.conf.j2
+#    dest: "/etc/modules-load.d/{{ item }}.conf"
+#    mode: 0644
+#  with_items:
+#    - lustre
+#
+#
+#- name: Reboot Hosts to Apply New Kernel
+#  import_tasks: ext/reboot-hosts.yml
+
