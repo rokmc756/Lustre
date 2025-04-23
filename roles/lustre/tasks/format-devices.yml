@@ -5,7 +5,7 @@
     state: present
 
 
-- name: Ensure MGS Has Been Formatted
+- name: Format MGT
   shell: |
     /usr/sbin/mkfs.lustre --reformat --mgs {{ item.dev_prefix }}/{{ item.dev }}
   register: format_mgs
