@@ -15,9 +15,10 @@
 
 - name: Purge Block Devices
   shell: |
-    dd if=/dev/zero of={{ item.dev }} bs=4096 count=1 conv=notrunc
+    dd if=/dev/zero of=/dev/{{ item.phy_dev }} bs=4096 count=1 conv=notrunc
   register: purge_block_devices
   ignore_errors: true
+  when: item.node == inventory_hostname
   with_items:
     - "{{ _cluster.mgs }}"
     - "{{ _cluster.mdts }}"
@@ -28,9 +29,10 @@
 
 - name: Wipe Filesystem in NVME Devices
   shell: |
-    wipefs -a {{ item }}
+    wipefs -a /dev/{{ item.phy_dev }}
   register: wipefs_nvme_devices
   ignore_errors: true
+  when: item.node == inventory_hostname
   with_items:
     - "{{ _cluster.mgs }}"
     - "{{ _cluster.mdts }}"
@@ -41,9 +43,10 @@
 
 - name: Delete Zap in NVME Devices
   shell: |
-    sgdisk --zap-all --delete {{ item }}
+    sgdisk --zap-all --delete /dev/{{ item.phy_dev }}
   register: delete_zap_nvme_devices
   ignore_errors: true
+  when: item.node == inventory_hostname
   with_items:
     - "{{ _cluster.mgs }}"
     - "{{ _cluster.mdts }}"
@@ -54,9 +57,10 @@
 
 - name: Discard Block ID
   shell: |
-    blkdiscard {{ item }}
+    blkdiscard /dev/{{ item.phy_dev }}
   register: discard_block_id
   ignore_errors: true
+  when: item.node == inventory_hostname
   with_items:
     - "{{ _cluster.mgs }}"
     - "{{ _cluster.mdts }}"

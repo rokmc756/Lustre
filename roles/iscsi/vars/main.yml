@@ -11,10 +11,14 @@ _iscsi:
       - { name: "jtest-vdisk03", base_dir: "/vdisk/iscsi03", size: "20G", group: "mdt3", mp_alias: "mdt31", iscsi_dev: "sda", client: "rk94-node04" }
       - { name: "jtest-vdisk04", base_dir: "/vdisk/iscsi04", size: "20G", group: "ost1", mp_alias: "ost11", iscsi_dev: "sda", client: "rk94-node05" }
       - { name: "jtest-vdisk05", base_dir: "/vdisk/iscsi05", size: "20G", group: "ost1", mp_alias: "ost12", iscsi_dev: "sdb", client: "rk94-node05" }
-      - { name: "jtest-vdisk06", base_dir: "/vdisk/iscsi06", size: "20G", group: "ost2", mp_alias: "ost21", iscsi_dev: "sda", client: "rk94-node06" }
-      - { name: "jtest-vdisk07", base_dir: "/vdisk/iscsi07", size: "20G", group: "ost2", mp_alias: "ost22", iscsi_dev: "sdb", client: "rk94-node06" }
-      - { name: "jtest-vdisk08", base_dir: "/vdisk/iscsi08", size: "20G", group: "ost3", mp_alias: "ost31", iscsi_dev: "sda", client: "rk94-node07" }
-      - { name: "jtest-vdisk09", base_dir: "/vdisk/iscsi09", size: "20G", group: "ost3", mp_alias: "ost32", iscsi_dev: "sdb", client: "rk94-node07" }
-      - { name: "jtest-vdisk10", base_dir: "/vdisk/iscsi10", size: "20G", group: "ost4", mp_alias: "ost41", iscsi_dev: "sda", client: "rk94-node08" }
-      - { name: "jtest-vdisk11", base_dir: "/vdisk/iscsi11", size: "20G", group: "ost4", mp_alias: "ost42", iscsi_dev: "sdb", client: "rk94-node08" }
+      - { name: "jtest-vdisk06", base_dir: "/vdisk/iscsi06", size: "20G", group: "ost1", mp_alias: "ost13", iscsi_dev: "sdc", client: "rk94-node05" }
+      - { name: "jtest-vdisk07", base_dir: "/vdisk/iscsi07", size: "20G", group: "ost2", mp_alias: "ost21", iscsi_dev: "sda", client: "rk94-node06" }
+      - { name: "jtest-vdisk08", base_dir: "/vdisk/iscsi08", size: "20G", group: "ost2", mp_alias: "ost22", iscsi_dev: "sdb", client: "rk94-node06" }
+      - { name: "jtest-vdisk09", base_dir: "/vdisk/iscsi09", size: "20G", group: "ost2", mp_alias: "ost23", iscsi_dev: "sdc", client: "rk94-node06" }
+      - { name: "jtest-vdisk10", base_dir: "/vdisk/iscsi10", size: "20G", group: "ost3", mp_alias: "ost31", iscsi_dev: "sda", client: "rk94-node07" }
+      - { name: "jtest-vdisk11", base_dir: "/vdisk/iscsi11", size: "20G", group: "ost3", mp_alias: "ost32", iscsi_dev: "sdb", client: "rk94-node07" }
+      - { name: "jtest-vdisk12", base_dir: "/vdisk/iscsi12", size: "20G", group: "ost3", mp_alias: "ost33", iscsi_dev: "sdc", client: "rk94-node07" }
+      - { name: "jtest-vdisk13", base_dir: "/vdisk/iscsi13", size: "20G", group: "ost4", mp_alias: "ost41", iscsi_dev: "sda", client: "rk94-node08" }
+      - { name: "jtest-vdisk14", base_dir: "/vdisk/iscsi14", size: "20G", group: "ost4", mp_alias: "ost42", iscsi_dev: "sdb", client: "rk94-node08" }
+      - { name: "jtest-vdisk15", base_dir: "/vdisk/iscsi15", size: "20G", group: "ost4", mp_alias: "ost43", iscsi_dev: "sdc", client: "rk94-node08" }
 

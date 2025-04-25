@@ -1,0 +1,39 @@
+---
+# TODO: We should use the built in mount system in ansible
+- name: Umount Lustre Filesystem
+  shell: |
+    umount {{ item.mount_prefix }}/{{ item.fs_name }}
+  register: mount_lustrefs
+  ignore_errors: true
+  with_items: "{{ _cluster.client }}"
+
+
+- name: Delete Mount Directory
+  file:
+    path: "{{ item.mount_prefix }}/{{ item.fs_name }}"
+    state: absent
+  register: delete_mount_dir
+  ignore_errors: true
+  with_items: "{{ _cluster.client }}"
+
+
+- name: Delete Root Mount Directory
+  file:
+    path: "{{ item }}"
+    state: absent
+  register: delete_mount_dir
+  ignore_errors: true
+  with_items:
+    - "/lustre"
+
+
+#- name: Mount Lustre Filesystem
+#  mount:
+#    fstype: lustre
+#    src: "{{ item.mgsnode }}{{ item.lnet_suffix }}:/{{ item.fs_name }}"
+#    path: "{{ item.mount_prefix }}/{{ item.fs_name }}"
+#    state: mounted
+#  register: mount_lustrefs
+#  with_items: "{{ _cluster.client }}"
+#  # opts: "skpath=/etc/lustre,defaults,_netdev,noauto,x-systemd.automount,x-systemd.requires=lnet.service"
+

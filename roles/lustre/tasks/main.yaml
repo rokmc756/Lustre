@@ -63,6 +63,12 @@
   when: ( client is defined and client == true ) and inventory_hostname in groups['client']
 
 
+- name: Umount Lustre Client
+  import_tasks: umount-client.yml
+  tags: umount, client
+  when: ( client is defined and client == true ) and inventory_hostname in groups['client']
+
+
 #- name: Install Lustre Server
 #  import_tasks: install-server.yml
 #  tags: install, setup
@@ -78,8 +84,7 @@
 - name: Cleanup Devices
   import_tasks: cleanup-devices.yml
   tags: clean
-  when: ( dev is defined and dev == true )
-
+  when: ( dev is defined and dev == true ) and ( inventory_hostname not in groups['iscsi'] or inventory_hostname not in groups['client'] )
 
 
 #- name: Uninstall Lustre Client
