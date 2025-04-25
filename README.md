@@ -119,4 +119,5 @@ make lustre r=install s=client
 ## Reference
 - https://metebalci.com/blog/lustre-2.15.4-on-rhel-8.9-and-ubuntu-22.04/
 - https://cjy2181.tistory.com/5
-- Test
+- https://techcommunity.microsoft.com/blog/azurehighperformancecomputingblog/parallel-virtual-file-systems-on-microsoft-azure---part-2-lustre-on-azure/306524
+

@@ -68,11 +68,12 @@
 
 - name: Save Lustre Kernel Module
   template:
-    src: lustre.conf.j2
-    dest: "/etc/modules-load.d/{{ item }}.conf"
+    src: "{{ item.name }}.conf.j2"
+    dest: "{{ item.dst }}"
     mode: 0644
   with_items:
-    - lustre
+    - { fn: "lustre", dst: "/etc/modules-load.d/lustre.conf" }
+    - { fn: "10-unsupported-modules", dst: "/etc/modprobe.d/10-unsupported-modules.conf" }
 
 
 - name: Reboot Hosts to Apply New Kernel
