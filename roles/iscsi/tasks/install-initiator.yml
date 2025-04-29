@@ -11,64 +11,18 @@
   register: copy_iscsid_conf
 
 
-- name: Copy iSCSI Initiator Config Files
-  template: src=initiatorname.iscsi.j2 dest=/etc/iscsi/initiatorname.iscsi owner=root group=root mode=644 force=yes
-  register: copy_initiatorname
-  when: item.client == inventory_hostname
-  with_items: "{{ _iscsi.target.disks }}"
+- name: Configure First iSCSI Initiator
+  import_tasks: config-first-initiator.yml
 
 
-- name: Enable and Start iSCSId
-  systemd:
-    name: "{{ item }}"
-    state: restarted
-  register: restart_iscsid
-  until: restart_iscsid is succeeded
-  retries: 3
-  delay: 10
-  with_items:
-    - "iscsid"
-
-
-- name: Discover Target via Path 0
-  shell: |
-    iscsiadm -m discovery -t sendtargets -p {{ hostvars[groups['iscsi'][0]].ansible_ssh_host }}
-  register: discover_target_path0
-
-
-#- name: Discover Target via Path 1
-#  shell: |
-#    iscsiadm -m discovery -t sendtargets -p {{ hostvars[groups['iscsi'][0]].ansible_ssh_host1 }}
-#  register: discover_target_path1
-
-
-- name: Confirm Status after Discovery
-  shell: |
-    iscsiadm -m node -o show
-  register: confirm_discovery_status
-
-
-- name: Login to the Target via Path 0
-  shell: |
-    iscsiadm --mode node --target {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.name }} \
-    --portal {{ hostvars[groups['iscsi'][0]].ansible_ssh_host }} --login
-  register: login_target_path0
-  when: item.client == inventory_hostname
-  with_items: "{{ _iscsi.target.disks }}"
-
-
-#- name: Login to the Target via Path 1
-#  shell: |
-#    iscsiadm --mode node --target {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.name }} \
-#    --portal {{ hostvars[groups['iscsi'][0]].ansible_ssh_host1 }} --login
-#  register: login_target_path1
-#  when: item.client == inventory_hostname
-#  with_items: "{{ _iscsi.target.disks }}"
+#- name: Configure Second iSCSI Initiator
+#  import_tasks: config-second-initiator.yml
 
 
 - name: Check the Device Name Attached
   shell: |
     iscsiadm -m session -P 3 | grep 'Target\|disk' | grep Attached | awk '{print $4}'
   register: attach_device_name
-#  command: cat /proc/partitions
+# command: cat /proc/partitions
+
 

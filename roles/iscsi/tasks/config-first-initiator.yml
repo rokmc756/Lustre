@@ -1,0 +1,42 @@
+---
+- name: Copy iSCSI Initiator Config Files
+  vars:
+    init_iqn: "{{ _iscsi.target.iqn01 }}"
+  template: src=initiatorname.iscsi.j2 dest=/etc/iscsi/initiatorname.iscsi owner=root group=root mode=644 force=yes
+  register: copy_initiatorname
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Enable and Start iSCSId
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+  register: restart_iscsid
+  until: restart_iscsid is succeeded
+  retries: 3
+  delay: 10
+  with_items:
+    - "iscsid"
+
+
+- name: Discover iSCSI Target 01
+  shell: |
+    iscsiadm -m discovery -t sendtargets -p "{{ hostvars[groups['iscsi'][0]].ansible_ssh_host }}"
+  register: discover_target_path0
+
+
+- name: Confirm Status after Discovery
+  shell: |
+    iscsiadm -m node -o show
+  register: confirm_discovery_status
+
+
+- name: Login to the iSCSI Target 01
+  shell: |
+    iscsiadm --mode node --target {{ _iscsi.target.iqn01 }}:{{ item.group }}.{{ item.name }} \
+    --portal {{ hostvars[groups['iscsi'][0]].ansible_ssh_host }} --login
+  register: login_target_path01
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.clients }}"
+

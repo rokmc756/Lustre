@@ -1,0 +1,146 @@
+---
+- name: Check the Device Name Attached
+  shell: |
+    iscsiadm -m session -P 3 | grep 'Target\|disk' | grep Attached | awk '{print $4}'
+  register: attach_device_name
+  ignore_errors: true
+
+
+- name: Confirm the Established Session
+  shell: |
+    iscsiadm -m session -o show
+  register: confirm_established_session
+  ignore_errors: true
+
+
+- name: Kill iSCSI Session via Path 0
+  vars:
+    init_iqn: "iqn.2025-04.com.ddn.jtest01"
+  shell: |
+    iscsiadm --mode node -T {{ init_iqn }}:{{ item.group }}.{{ item.name }} \
+    -p {{ hostvars[groups['iscsi'][0]].ansible_ssh_host }}:3260 -u
+  register: kill_iscsi_path0_session
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Kill iSCSI Session via Path 1
+  vars:
+    init_iqn: "iqn.2025-04.com.ddn.jtest02"
+  shell: |
+    iscsiadm --mode node -T {{ init_iqn }}:{{ item.group }}.{{ item.name }} \
+    -p {{ hostvars[groups['iscsi'][1]].ansible_ssh_host }}:3260 -u
+  register: kill_iscsi_path0_session
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Remove Node to Prevent the Session from Re-Establishing
+  vars:
+    init_iqn: "iqn.2025-04.com.ddn.jtest01"
+  shell: |
+    iscsiadm --mode node -o delete -T {{ init_iqn }}:{{ item.group }}.{{ item.name }}
+  register: remove_node_session
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+# command: iscsiadm -m session
+
+
+- name: Remove Node to Prevent the Session from Re-Establishing
+  vars:
+    init_iqn: "iqn.2025-04.com.ddn.jtest02"
+  shell: |
+    iscsiadm --mode node -o delete -T {{ init_iqn }}:{{ item.group }}.{{ item.name }}
+  register: remove_node_session
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+# command: iscsiadm -m session
+
+
+- name: Delete iSCSI Session Directory to Prevent Re-Establish Connection
+  vars:
+    init_iqn: "iqn.2025-04.com.ddn.jtest01"
+  file:
+    path: "/var/lib/iscsi/nodes/{{ init_iqn }}:{{ item.group }}.{{ item.name }}"
+    state: absent
+  register: delete_iscsi_session_directory
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Delete iSCSI Session Directory to Prevent Re-Establish Connection
+  vars:
+    init_iqn: "iqn.2025-04.com.ddn.jtest02"
+  file:
+    path: "/var/lib/iscsi/nodes/{{ init_iqn }}:{{ item.group }}.{{ item.name }}"
+    state: absent
+  register: delete_iscsi_session_directory
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Delete iSCSI Client Session Directory to Prevent Re-Establish Connection
+  vars:
+    init_iqn: "iqn.2025-04.com.ddn.jtest01"
+  file:
+    path: "/var/lib/iscsi/nodes/{{ init_iqn }}:{{ item.group }}.{{ item.client }}"
+    state: absent
+  register: delete_iscsi_client_session_directory
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Delete iSCSI Client Session Directory to Prevent Re-Establish Connection
+  vars:
+    init_iqn: "iqn.2025-04.com.ddn.jtest02"
+  file:
+    path: "/var/lib/iscsi/nodes/{{ init_iqn }}:{{ item.group }}.{{ item.client }}"
+    state: absent
+  register: delete_iscsi_client_session_directory
+  ignore_errors: true
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Stop and Disable iSCSId
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+  register: stop_iscsid
+  ignore_errors: true
+  until: stop_iscsid is succeeded
+  retries: 3
+  delay: 10
+  with_items:
+    - "iscsid"
+
+
+- name: Delete Config Files of iSCSI Initiator
+  file:
+    path: "{{ item }}"
+    state: absent
+  register: delete_iscsi_initator_config_files
+  ignore_errors: true
+  with_items:
+    - "/etc/iscsi/iscsid.conf"
+    - "/etc/iscsi/initiatorname.iscsi"
+    - "/etc/iscsi/nodes"
+    - "/etc/iscsi/send_targets"
+    - "/var/lib/iscsi/nodes"
+    - "/var/lib/iscsi/send_targets"
+
+
+- name: Uninstall iSCSI Initiator
+  package:
+    name: iscsi-initiator-utils
+    state: absent
+  register: uninstall_iscsi_initiator
+  ignore_errors: true
+

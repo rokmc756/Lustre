@@ -1,5 +1,5 @@
 ---
-- import_tasks: ext/set-multipath-facts.yml
+- import_tasks: mp/set-multipath-facts.yml
 
 
 - name: Discover Target via Path 1

@@ -1,0 +1,116 @@
+---
+- import_tasks: mp/set-multipath-facts.yml
+
+
+- name: Configure First Multipath
+  import_tasks: mp/config-first-multipath.yml
+
+
+#- name: Configure Second Multipath
+#  import_tasks: mp/config-second-multipath.yml
+
+
+#- name: Copy iSCSI Initiator Config Files
+#  vars:
+#    init_iqn: "{{ _iscsi.target.iqn01 }}"
+#  template: src=initiatorname.iscsi.j2 dest=/etc/iscsi/initiatorname.iscsi owner=root group=root mode=644 force=yes
+#  register: copy_initiatorname
+#  when: item.client == inventory_hostname
+#  with_items: "{{ _iscsi.target.disks }}"
+
+
+#- name: Enable and Start iSCSId
+#  systemd:
+#    name: "{{ item }}"
+#    state: restarted
+#  register: restart_iscsid
+#  until: restart_iscsid is succeeded
+#  retries: 3
+#  delay: 10
+#  with_items:
+#  - "iscsid"
+
+
+#- name: Discover Target via Path 1
+#  shell: |
+#    iscsiadm -m discovery -t sendtargets -p {{ hostvars[groups['iscsi'][0]].ansible_ssh_host1 }}
+#  register: discover_target_path1
+
+
+#- name: Login to the Target via Path 1
+#  shell: |
+#    iscsiadm --mode node --target {{ _iscsi.target.iqn01 }}:{{ item.group }}.{{ item.name }} \
+#    --portal {{ hostvars[groups['iscsi'][0]].ansible_ssh_host1 }} --login
+#  register: login_target_path1
+#  when: item.client == inventory_hostname
+#  with_items: "{{ _iscsi.target.clients }}"
+#  # with_items: "{{ _iscsi.target.multipath }}"
+#  # with_items: "{{ _iscsi.target.disks }}"
+
+
+#- name: Copy iSCSI Initiator Config Files
+#  vars:
+#    init_iqn: "{{ _iscsi.target.iqn02 }}"
+#  template: src=initiatorname.iscsi.j2 dest=/etc/iscsi/initiatorname.iscsi owner=root group=root mode=644 force=yes
+#  register: copy_initiatorname
+#  when: item.client == inventory_hostname
+#  with_items: "{{ _iscsi.target.disks }}"
+
+
+#- name: Enable and Start iSCSId
+#  systemd:
+#    name: "{{ item }}"
+#    state: restarted
+#  register: restart_iscsid
+#  until: restart_iscsid is succeeded
+#  retries: 3
+#  delay: 10
+#  with_items:
+#    - "iscsid"
+
+
+#- name: Discover Target via Path 2
+#  shell: |
+#    iscsiadm -m discovery -t sendtargets -p {{ hostvars[groups['iscsi'][1]].ansible_ssh_host1 }}
+#  register: discover_target_path2
+
+
+#- name: Login to the Target via Path 2
+#  shell: |
+#    iscsiadm --mode node --target {{ _iscsi.target.iqn02 }}:{{ item.group }}.{{ item.name }} \
+#    --portal {{ hostvars[groups['iscsi'][1]].ansible_ssh_host1 }} --login
+#  register: login_target_path2
+#  when: item.client == inventory_hostname
+#  with_items: "{{ _iscsi.target.multipath }}"
+#  # with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Install Multipathd
+  package:
+    name: device-mapper-multipath
+    state: present
+  register: install_multipath_pkg
+
+
+- name: Enable Multipath Config
+  shell: |
+    mpathconf --enable
+  register: enable_multipath
+
+
+- name: Copy Multipath Config Files
+  template: src=multipath.conf.j2 dest=/etc/multipath.conf owner=root group=root mode=644 force=yes
+  register: copy_multipath_conf
+
+
+- name: Enable and Start Multipathd
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+  register: restart_multipathd
+  until: restart_multipathd is succeeded
+  retries: 3
+  delay: 10
+  with_items:
+    - "multipathd"
+

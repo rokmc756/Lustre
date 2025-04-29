@@ -1,0 +1,108 @@
+---
+- name: Install iSCSI Initiator
+  package:
+    name: iscsi-initiator-utils
+    state: present
+  register: install_iscsi_initiator
+
+
+- name: Copy iSCSId Config Files
+  template: src=iscsid.conf.j2 dest=/etc/iscsi/iscsid.conf owner=root group=root mode=644 force=yes
+  register: copy_iscsid_conf
+
+
+- name: Copy iSCSI Initiator Config Files
+  vars:
+    init_iqn: "iqn.2025-04.com.ddn.jtest01"
+  template: src=initiatorname.iscsi.j2 dest=/etc/iscsi/initiatorname.iscsi owner=root group=root mode=644 force=yes
+  register: copy_initiatorname
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Enable and Start iSCSId
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+  register: restart_iscsid
+  until: restart_iscsid is succeeded
+  retries: 3
+  delay: 10
+  with_items:
+    - "iscsid"
+
+
+- name: Discover Target via iSCSI 01
+  shell: |
+    iscsiadm -m discovery -t sendtargets -p {{ item }}
+  register: discover_target_path0
+  with_items:
+    - "{{ hostvars[groups['iscsi'][0]].ansible_ssh_host }}"
+
+
+- name: Confirm Status after Discovery
+  shell: |
+    iscsiadm -m node -o show
+  register: confirm_discovery_status
+
+
+- name: Login to the Target via iSCSI 01
+  shell: |
+    iscsiadm --mode node --target {{ _iscsi.target.iqn01 }}:{{ item.group }}.{{ item.name }} \
+    --portal {{ hostvars[groups['iscsi'][0]].ansible_ssh_host }} --login
+  register: login_target_path01
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Copy iSCSI Initiator Config Files
+  vars:
+    init_iqn: "iqn.2025-04.com.ddn.jtest02"
+  template: src=initiatorname.iscsi.j2 dest=/etc/iscsi/initiatorname.iscsi owner=root group=root mode=644 force=yes
+  register: copy_initiatorname
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Enable and Start iSCSId
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+  register: restart_iscsid
+  until: restart_iscsid is succeeded
+  retries: 3
+  delay: 10
+  with_items:
+    - "iscsid"
+
+
+- name: Discover Target via iSCSI 01
+  shell: |
+    iscsiadm -m discovery -t sendtargets -p {{ item }}
+  register: discover_target_path0
+  with_items:
+    - "{{ hostvars[groups['iscsi'][1]].ansible_ssh_host }}"
+
+
+- name: Confirm Status after Discovery
+  shell: |
+    iscsiadm -m node -o show
+  register: confirm_discovery_status
+
+
+- name: Login to the Target via iSCSI 02
+  shell: |
+    iscsiadm --mode node --target {{ _iscsi.target.iqn02 }}:{{ item.group }}.{{ item.name }} \
+    --portal {{ hostvars[groups['iscsi'][1]].ansible_ssh_host }} --login
+  register: login_target_path02
+  when: item.client == inventory_hostname
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Check the Device Name Attached
+  shell: |
+    iscsiadm -m session -P 3 | grep 'Target\|disk' | grep Attached | awk '{print $4}'
+  register: attach_device_name
+#  command: cat /proc/partitions
+
+

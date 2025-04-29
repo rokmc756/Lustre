@@ -11,19 +11,11 @@
 
 
 #- name: Disallow iSCSI Target Service Port
-#  shell: |
-#    firewall-cmd --remove-service=iscsi-target --permanent
-#  register: disallow_iscsi_target
-#  ignore_errors: true
-#- debug: msg={{ disallow_iscsi_target }}
+#  firewall-cmd --remove-service=iscsi-target --permanent
 
 
 #- name: Reload Firewalld
-#  shell: |
-#    firewall-cmd --reload
-#  register: reload_firewalld
-#  ignore_errors: true
-#- debug: msg={{ reload_firewalld }}
+#  firewall-cmd --reload
 
 
 - name: Uninstall iSCSI Target and Relevant Packages

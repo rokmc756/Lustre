@@ -19,26 +19,59 @@
 - debug: msg={{ create_dir }}
 
 
+#- name: Create an Target Disks by TargetCLI
+#  shell: |
+#    cat << EOF | targetcli
+#    cd /backstores/fileio
+#    create {{ item.name }} {{ item.base_dir }}/{{ item.name }}.img {{ item.size }}
+#    cd /iscsi
+#    create {{ iscsi_iqn }}:{{ item.group }}.{{ item.name }}
+#    cd {{ iscsi_iqn }}:{{ item.group }}.{{ item.name }}/tpg1/luns
+#    create /backstores/fileio/{{ item.name }}
+#    cd ../acls
+#    create {{ iscsi_iqn }}:{{ item.group }}.{{ item.client }}
+#    cd {{ iscsi_iqn }}:{{ item.group }}.{{ item.client }}
+#    set auth nochap
+#    set attribute generate_node_acls=1
+#    exit
+#    EOF
+#  register: create_target_disks
+#  with_items: "{{ _iscsi.target.disks }}"
+# set auth userid=iscsiadm
+# set auth password=changeme
+
+
+
+
 - name: Create an Target Disks by TargetCLI
   shell: |
     cat << EOF | targetcli
     cd /backstores/fileio
     create {{ item.name }} {{ item.base_dir }}/{{ item.name }}.img {{ item.size }}
     cd /iscsi
-    create {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.name }}
-    cd {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.name }}/tpg1/luns
+    create {{ iscsi_iqn }}:{{ item.group }}.{{ item.name }}
+    cd {{ iscsi_iqn }}:{{ item.group }}.{{ item.name }}/tpg1/luns
     create /backstores/fileio/{{ item.name }}
+    exit
+    EOF
+  register: create_target_disks
+  with_items: "{{ _iscsi.target.disks }}"
+
+
+- name: Create an Target Disks by TargetCLI
+  shell: |
+    cat << EOF | targetcli
+    cd /iscsi
+    cd {{ iscsi_iqn }}:{{ item.group }}.{{ item.name }}/tpg1/luns
     cd ../acls
-    create {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.client }}
-    cd {{ _iscsi.target.iqn }}:{{ item.group }}.{{ item.client }}
+    create {{ iscsi_iqn }}:{{ item.group }}.{{ item.client }}
+    cd {{ iscsi_iqn }}:{{ item.group }}.{{ item.client }}
     set auth nochap
     set attribute generate_node_acls=1
     exit
     EOF
   register: create_target_disks
-  with_items: "{{ _iscsi.target.disks }}"
-# set auth userid=iscsiadm
-# set auth password=changeme
+  with_items: "{{ _iscsi.target.clients }}"
 
 
 - name: Install PolicyCoreUtils Package
@@ -63,17 +96,8 @@
 
 
 #- name: Allow iSCSI Target Service Port
-#  shell: |
-#    firewall-cmd --add-service=iscsi-target --permanent
-#  ignore_errors: true
-#  register: allow_iscsi_target
-#- debug: msg={{ allow_iscsi_target }}
-
+#  firewall-cmd --add-service=iscsi-target --permanent
 
 #- name: Reload Firewalld
-#  shell: |
-#    firewall-cmd --reload
-#  ignore_errors: true
-#  register: reload_firewalld
-#- debug: msg={{ reload_firewalld }}
+#  firewall-cmd --reload
 

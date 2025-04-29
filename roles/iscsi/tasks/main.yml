@@ -1,4 +1,14 @@
 ---
+- name: Check OS ( iSCSI )
+  fail: msg="{{ ansible_distribution }} is Not Supported!"
+  when: ansible_distribution != 'RedHat' or ansible_distribution != 'CentOS' or ansible_distribution != 'Rocky'
+
+
+- name: Set Facts for Network and Packages Informations
+  import_tasks: set-facts.yml
+  tags: install, uninstall, setup, remove, enable, disable, create, delete
+
+
 - name: Install iSCSI Target In Less Version Than RHEL/Rocky/CentOS 8.x
   import_tasks: rh7/install-target.yml
   tags: install, create
@@ -38,13 +48,13 @@
 
 
 - name: Enable Multipath
-  import_tasks: ext/enable-multipath.yml
+  import_tasks: mp/enable-multipath.yml
   tags: enable, install, setup
   when: ( multipath is defined and multipath == true ) and inventory_hostname in groups['cluster']
 
 
 - name: Disable Multipath
-  import_tasks: ext/disable-multipath.yml
+  import_tasks: mp/disable-multipath.yml
   tags: disable, uninstall, remove
   when: ( multipath is defined and multipath == true ) and inventory_hostname in groups['cluster']
 

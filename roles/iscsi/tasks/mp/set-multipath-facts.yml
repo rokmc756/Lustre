@@ -3,9 +3,10 @@
   shell: |
     /lib/udev/scsi_id --whitelisted --replace-whitespace --device=/dev/{{ item.iscsi_dev }}
   register: get_wwids
-  with_items: "{{ _iscsi.target.disks }}"
+  with_items: "{{ _iscsi.target.clients }}"
   when: item.client == inventory_hostname
 - debug: msg={{ get_wwids }}
+  # with_items: "{{ _iscsi.target.multipath }}"
 
 
 - name: Print WWIDs
@@ -30,7 +31,9 @@
   set_fact:
     mp_aliases: "{{ (mp_aliases | default([])) + [item.mp_alias] }}"
   when: item.client == inventory_hostname
-  with_items: "{{ _iscsi.target.disks }}"
+  with_items: "{{ _iscsi.target.clients }}"
+  # with_items: "{{ _iscsi.target.multipath }}"
+  # with_items: "{{ _iscsi.target.disks }}"
 
 
 - name: Print Multipath Alias
