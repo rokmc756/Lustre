@@ -69,12 +69,6 @@
   when: ( client is defined and client == true ) and inventory_hostname in groups['client']
 
 
-#- name: Install Lustre Server
-#  import_tasks: install-server.yml
-#  tags: install, setup
-#  when: ( server is defined and server == true ) and inventory_hostname in groups['server']
-
-
 - name: Disable Lustre Network
   import_tasks: disable-lustre-network.yml
   tags: disable, remove
@@ -85,18 +79,6 @@
   import_tasks: cleanup-devices.yml
   tags: clean
   when: ( dev is defined and dev == true ) and inventory_hostname in groups['cluster']
-
-
-#- name: Uninstall Lustre Client
-#  import_tasks: uninstall-client.yml
-#  tags: uninstall, remove
-#  when: ( client is defined and client == true ) and inventory_hostname in groups['client']
-
-
-#- name: Uninstall Lustre Server
-#  import_tasks: uninstall-server.yml
-#  tags: uninstall, remove
-#  when: ( server is defined and server == true ) and inventory_hostname in groups['server']
 
 
 - name: Uninstall Lustre Pakcages
@@ -115,9 +97,4 @@
   import_tasks: ext/disable-firewall.yml
   tags: disable, remove
   when: ( firewall is defined and firewall == true )
-
-
-#- name: Uninstall Lustre
-#  import_tasks: uninstall.yml
-#  tags: clean, remove, uninstall
 
