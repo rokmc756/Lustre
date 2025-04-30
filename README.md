@@ -1,7 +1,13 @@
 ## What is Lustre?
-Lustre* is an open-source, global single-namespace, POSIX-compliant, distributed parallel file system designed for scalability, high-performance, and high-availability. Lustre runs on Linux-based operating systems and employs a client-server network architecture. Storage is provided by a set of servers that can scale to populations measuring up to several hundred hosts. Lustre servers for a single file system instance can, in aggregate, present up to hundreds of petabytes of storage to thousands of compute clients, with multiple terabytes per second of combined throughput.
+Lustre* is an open-source, global single-namespace, POSIX-compliant, distributed parallel file system designed for scalability, high-performance, and high-availability.
+Lustre runs on Linux-based operating systems and employs a client-server network architecture. Storage is provided by a set of servers that can scale to populations measuring up to several hundred hosts.
+Lustre servers for a single file system instance can, in aggregate, present up to hundreds of petabytes of storage to thousands of compute clients, with multiple terabytes per second of combined throughput.
+
 Lustre is a file system that scales to meet the requirements of applications running on a range of systems from small-scale HPC environments up to the very largest supercomputers and has been created using object-based storage building blocks to maximize scalability.
-Redundant servers support storage fail-over, while metadata and data are stored on separate servers, allowing each file system to be optimized for different workloads. Lustre can deliver fast IO to applications across high-speed network fabrics, such as Ethernet, InfiniBand (IB), Omni-Path (OPA), and others.
+
+Redundant servers support storage fail-over, while metadata and data are stored on separate servers, allowing each file system to be optimized for different workloads.
+
+Lustre can deliver fast IO to applications across high-speed network fabrics, such as Ethernet, InfiniBand (IB), Omni-Path (OPA), and others.
 
 ## Lustre Filesystem Architecture
 <p align="center">
