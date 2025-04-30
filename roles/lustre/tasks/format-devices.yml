@@ -22,6 +22,7 @@
     {{ item.dev_prefix }}/{{ item.dev }}
   register: format_mdt
   until: format_mdt is succeeded
+  retries: 5
   loop: "{{ _cluster.mdts }}"
   when: ( item.node == inventory_hostname ) and ( inventory_hostname in groups['mds'] or inventory_hostname in groups['dne'] )
 

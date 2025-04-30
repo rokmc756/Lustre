@@ -87,11 +87,11 @@ make hosts r=init          # or uninit
 ## Create iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
 ```sh
 make iscsi r=create s=target
-make iscsi r=create s=client
+make iscsi r=create s=initiator
 make iscsi r=enable s=multipath
 
 make iscsi r=disable s=multipath
-make iscsi r=delete s=client
+make iscsi r=delete s=initiator
 make iscsi r=delete s=target
 ```
 

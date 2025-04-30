@@ -48,13 +48,13 @@
 - name: Mount Lustre Directories
   import_tasks: mount-dirs.yml
   tags: mount
-  when: ( dir is defined and dir == true ) and inventory_hostname not in groups['client']
+  when: ( dir is defined and dir == true ) and inventory_hostname in groups['cluster']
 
 
 - name: Umount Lustre Directories
   import_tasks: umount-dirs.yml
   tags: umount
-  when: ( dir is defined and dir == true ) and inventory_hostname not in groups['client']
+  when: ( dir is defined and dir == true ) and inventory_hostname in groups['cluster']
 
 
 - name: Mount Lustre Client
@@ -84,7 +84,7 @@
 - name: Cleanup Devices
   import_tasks: cleanup-devices.yml
   tags: clean
-  when: ( dev is defined and dev == true ) and ( inventory_hostname not in groups['iscsi'] or inventory_hostname not in groups['client'] )
+  when: ( dev is defined and dev == true ) and inventory_hostname in groups['cluster']
 
 
 #- name: Uninstall Lustre Client
