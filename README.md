@@ -16,9 +16,6 @@ Lustre can deliver fast IO to applications across high-speed network fabrics, su
 <img src="https://github.com/rokmc756/Lustre/blob/main/roles/lustre/images/lustre_file_system_overview_dne_lowres_v1.png" width="70%" height="70%">
 </p>
 
-### Diagram
-### Abstracting block storage
-### Exos Integration
 ## Lustre Ansible Playbook
 This Ansible Playbook provides the feature to build a Lustre Filesystem on Baremetal, Virtual Machines.
 The main purposes of this project are simple to deploy Lustre Filesystem quickly and learn knowleges about it.
@@ -42,10 +39,9 @@ $ brew install ansible
 $ brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
 ```
 
-
 ## Where is it originated?
-It has been developing based on the following project - https://github.com/
-Since above project is not useful to me I modified it with make utility and uninstall tasks for
+It has been developing based on the following project - https://github.com/stackhpc/ansible-lustre/tree/master/ansible
+Since above project is not useful to me, I modified it with make utility.
 
 
 ## Verified Lustre Version
@@ -59,7 +55,7 @@ Since above project is not useful to me I modified it with make utility and unin
 
 
 ## Usage
-Add the target system information into the inventory file named `ansible-hosts-rk9`.
+Add the target system information into the inventory file named `ansible-hosts`.
 For example:
 ```
 [all:vars]
@@ -67,21 +63,36 @@ ssh_key_filename="id_rsa"
 remote_machine_username="jomoon"
 remote_machine_password="changeme"
 
-[control]
-rk9-node01 ansible_ssh_host=192.168.2.191
 
-[server]
-rk9-node01 ansible_ssh_host=192.168.2.191
-rk9-node02 ansible_ssh_host=192.168.2.192
-rk9-node03 ansible_ssh_host=192.168.2.193
+[iscsi]
+rk94-node00 ansible_ssh_host=192.168.2.200 ansible_ssh_host1=192.168.0.200
+rk94-node99 ansible_ssh_host=192.168.2.249 ansible_ssh_host1=192.168.0.249
+
+[mgs]
+rk94-node01 ansible_ssh_host=192.168.2.201
+
+[mds]
+rk94-node02 ansible_ssh_host=192.168.2.202
+
+[dne]
+rk94-node03 ansible_ssh_host=192.168.2.203
+rk94-node04 ansible_ssh_host=192.168.2.204
+
+[oss]
+rk94-node05 ansible_ssh_host=192.168.2.205
+rk94-node06 ansible_ssh_host=192.168.2.206
+rk94-node07 ansible_ssh_host=192.168.2.207
+rk94-node08 ansible_ssh_host=192.168.2.208
 
 [cluster:children]
-server
+mgs
+mds
+dne
+oss
 
-[storage]
-rk9-node04 ansible_ssh_host=192.168.2.194
-rk9-node05 ansible_ssh_host=192.168.2.195
-rk9-node06 ansible_ssh_host=192.168.2.196
+[client]
+rk94-node09 ansible_ssh_host=192.168.2.209
+rk94-node10 ansible_ssh_host=192.168.2.210
 ~~ snip
 ```
 
@@ -99,11 +110,13 @@ When ready, run the make commands
 make hosts r=init          # or uninit
 ```
 
-## Create iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
+## Create or Delete iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
 ```sh
 make iscsi r=create s=target
 make iscsi r=create s=initiator
 make iscsi r=enable s=multipath
+
+or
 
 make iscsi r=disable s=multipath
 make iscsi r=delete s=initiator
@@ -121,7 +134,7 @@ make lustre r=enable s=network
 make lustre r=test s=network
 ```
 
-## Format Lustre Filesystem
+## Format and Mount Lustre Filesystem
 ```sh
 make lustre r=format s=fs
 make lustre r=mount s=dir
