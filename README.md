@@ -20,9 +20,7 @@ Lustre can deliver fast IO to applications across high-speed network fabrics, su
 This Ansible Playbook provides the feature to build a Lustre Filesystem on Baremetal, Virtual Machines.
 The main purposes of this project are simple to deploy Lustre Filesystem quickly and learn knowleges about it.
 If you're unfamiliar with Lustre, please refer to the
-[Introduction to Lustre](https://wiki.lustre.org/Introduction_to_Lustre)
-
-of the Linstor user's guide on https://linbit.com to learn more.
+[Introduction to Lustre](https://wiki.lustre.org/Introduction_to_Lustre) of the Lustre user's guide to learn more.
 
 **`System requirements`**:
   - All target systems must have passwordless SSH access.
