@@ -99,7 +99,48 @@ $ vi group_vars/all.yaml
 ---
 ansible_ssh_pass: "changeme"
 ansible_become_pass: "changeme"
-ansible_ssh_private_key_file: ~/.ssh/ansible_key
+
+_lustre:
+  project_name: lustre
+  os_version: "el9"
+  os_minor_version: "4"
+  domain: "jtest.ddn.com"
+  rdomain: "com.ddn.jtest"
+  cluster_name: jack-kr-lustre
+  major_version: "2"
+  minor_version: "16"
+  patch_version: "0"
+  build_version: "0"
+  download_url: "https://downloads.whamcloud.com/public/lustre"
+  download: false
+  base_path: /root
+  admin_user: admin
+  admin_passwd: changeme
+  bin_type: tar
+  nvme: true
+  net:
+    conn: "dpdk"                     # dpdk or udp
+    gateway: "192.168.2.1"
+    ha1: 1
+    ha2: 2
+    type: "virtual"                  # or physical
+    ipaddr0: "192.168.0.2"
+    ipaddr1: "192.168.1.2"
+    ipaddr2: "192.168.2.2"
+  backend:
+    net:
+      type: "virtual"                # or physical
+      ipaddr0: "192.168.0.2"
+      ipaddr1: "192.168.1.2"
+      ipaddr2: "192.168.2.2"
+  client:
+    net:
+      type: "virtual"                # or physical
+      cores: 1
+      ipaddr0: "192.168.0.2"
+      ipaddr1: "192.168.1.2"
+      ipaddr2: "192.168.2.2"
+~~ snip
 ```
 
 When ready, run the make commands

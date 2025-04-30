@@ -43,11 +43,6 @@ _lustre:
       ipaddr0: "192.168.0.2"
       ipaddr1: "192.168.1.2"
       ipaddr2: "192.168.2.2"
-  incus:
-    net:
-      ipaddr0: "192.168.0.2"
-      ipaddr1: "192.168.1.2"
-      ipaddr2: "192.168.2.2"
   vms:
     rk9: [ "rk9-freeipa", "rk94-node99", "rk94-node00", "rk94-node01", "rk94-node02", "rk94-node03", "rk94-node04", "rk94-node05", "rk94-node06", "rk94-node07", "rk94-node08", "rk94-node09", "rk94-node10" ]
     ubt24: [ "rk9-freeipa", "ubt24-node06", "ubt24-node07", "ubt24-node08", "ubt24-node09" ]
