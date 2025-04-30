@@ -1,7 +1,13 @@
 ## What is Lustre?
-
+Lustre* is an open-source, global single-namespace, POSIX-compliant, distributed parallel file system designed for scalability, high-performance, and high-availability. Lustre runs on Linux-based operating systems and employs a client-server network architecture. Storage is provided by a set of servers that can scale to populations measuring up to several hundred hosts. Lustre servers for a single file system instance can, in aggregate, present up to hundreds of petabytes of storage to thousands of compute clients, with multiple terabytes per second of combined throughput.
+Lustre is a file system that scales to meet the requirements of applications running on a range of systems from small-scale HPC environments up to the very largest supercomputers and has been created using object-based storage building blocks to maximize scalability.
+Redundant servers support storage fail-over, while metadata and data are stored on separate servers, allowing each file system to be optimized for different workloads. Lustre can deliver fast IO to applications across high-speed network fabrics, such as Ethernet, InfiniBand (IB), Omni-Path (OPA), and others.
 
 ## Lustre Filesystem Architecture
+<p align="center">
+<img src="https://github.com/rokmc756/Lustre/blob/main/roles/lustre/images/lustre_file_system_overview_dne_lowres_v1.png" width="70%" height="70%">
+</p>
+
 ### Diagram
 ### Abstracting block storage
 ### Exos Integration
@@ -9,7 +15,8 @@
 This Ansible Playbook provides the feature to build a Lustre Filesystem on Baremetal, Virtual Machines.
 The main purposes of this project are simple to deploy Lustre Filesystem quickly and learn knowleges about it.
 If you're unfamiliar with Lustre, please refer to the
-[Introduction to Linstor section](https://linbit.com/drbd-user-guide/linstor-guide-1_0-en/#p-linstor-introduction)
+[Introduction to Lustre](https://wiki.lustre.org/Introduction_to_Lustre)
+
 of the Linstor user's guide on https://linbit.com to learn more.
 
 **`System requirements`**:
@@ -33,8 +40,8 @@ It has been developing based on the following project - https://github.com/
 Since above project is not useful to me I modified it with make utility and uninstall tasks for
 
 
-## Verified Linstor Version
-* Lustre x.x.x
+## Verified Lustre Version
+* Lustre 2.16.x
 
 
 ## Supported Platform and OS
@@ -109,6 +116,7 @@ make lustre r=test s=network
 ## Format Lustre Filesystem
 ```sh
 make lustre r=format s=fs
+make lustre r=mount s=dir
 ```
 
 ## Install Lustre Clients
@@ -120,5 +128,5 @@ make lustre r=install s=client
 - https://metebalci.com/blog/lustre-2.15.4-on-rhel-8.9-and-ubuntu-22.04/
 - https://cjy2181.tistory.com/5
 - https://techcommunity.microsoft.com/blog/azurehighperformancecomputingblog/parallel-virtual-file-systems-on-microsoft-azure---part-2-lustre-on-azure/306524
-- Test
+- https://github.com/storagebit/lure
 
