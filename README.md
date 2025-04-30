@@ -52,7 +52,8 @@ Since above project is not useful to me, I modified it with make utility.
 * Rocky Linux 9.4
 
 
-## Usage
+## How to Run Lustre Ansible Playbook
+### 1) Configure Ansible Hosts
 Add the target system information into the inventory file named `ansible-hosts`.
 For example:
 ```
@@ -94,6 +95,7 @@ rk94-node10 ansible_ssh_host=192.168.2.210
 ~~ snip
 ```
 
+### 2) Configure Global Variables
 ```sh
 $ vi group_vars/all.yaml
 ---
