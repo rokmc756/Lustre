@@ -52,3 +52,4 @@
   loop: "{{ _cluster.mgs }}"
   when: ( item.node == inventory_hostname ) and inventory_hostname in groups['mgs']
 
+

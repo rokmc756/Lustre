@@ -43,8 +43,8 @@
 
 - name: Install iSCSI Initiator
   import_tasks: install-initiator.yml
-  tags: install, create
-  when: ( client is defined and client == true ) and inventory_hostname in groups['cluster']
+  tags: setup, create, install
+  when: ( initiator is defined and initiator == true ) and inventory_hostname in groups['cluster']
 
 
 - name: Enable Multipath
@@ -61,7 +61,6 @@
 
 - name: Uninstall iSCSI Initiator
   import_tasks: uninstall-initiator.yml
-  tags: uninstall, delete
-  when: ( client is defined and client == true ) and inventory_hostname in groups['cluster']
-
+  tags: remove, delete, uninstall
+  when: ( initiator is defined and initiator == true ) and inventory_hostname in groups['cluster']
 

@@ -1,0 +1,10 @@
+---
+- hosts: all
+  # strategy: free
+  gather_facts: yes
+  become: yes
+  vars:
+    print_debug: true
+  roles:
+    - { role: iscsi }
+
