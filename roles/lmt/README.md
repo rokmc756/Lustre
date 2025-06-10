@@ -1,10 +1,8 @@
+## Trying to install LMT
 
-https://github.com/whamcloud/integrated-manager-for-lustre/
-
-[ Install LMT ]
 $ dnf install -y cargo
-$ dnf install rust-sqlx-postgres-devel
 
+$ dnf install rust-sqlx-postgres-devel
 
 $ git clone https://github.com/whamcloud/integrated-manager-for-lustre/
 
@@ -19,9 +17,12 @@ $ source ~/.bashrc
 
 $ cargo install sqlx-cli
 
-## Other References
-https://github.com/chaos/lmt-gui
-https://github.com/LLNL/lmt
-https://wiki.lustre.org/Integrated_Manager_for_Lustre
+
+
+## References
+- https://github.com/whamcloud/integrated-manager-for-lustre/
+- https://github.com/chaos/lmt-gui
+- https://github.com/LLNL/lmt
+- https://wiki.lustre.org/Integrated_Manager_for_Lustre
 
 
