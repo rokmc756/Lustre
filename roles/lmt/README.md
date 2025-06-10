@@ -24,5 +24,7 @@ $ cargo install sqlx-cli
 - https://github.com/chaos/lmt-gui
 - https://github.com/LLNL/lmt
 - https://wiki.lustre.org/Integrated_Manager_for_Lustre
+- https://docs.rs/crate/sqlx-cli/latest
+
 
 
