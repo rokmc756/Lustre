@@ -64,7 +64,7 @@ remote_machine_password="changeme"
 
 
 [iscsi]
-rk94-node00 ansible_ssh_host=192.168.2.200 ansible_ssh_host1=192.168.0.200
+rk94-node00 ansible_ssh_host=192.168.2.248 ansible_ssh_host1=192.168.0.248
 rk94-node99 ansible_ssh_host=192.168.2.249 ansible_ssh_host1=192.168.0.249
 
 [mgs]

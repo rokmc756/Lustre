@@ -53,3 +53,55 @@ vmware:
   esxi_username: "root"
   esxi_password: "Changeme34#$"
 
+
+pgsql:
+  cluster_name: jack-kr-pgsql
+  major_version: "17"
+  minor_version: ""
+  patch_version: ""
+  build_version: ""
+  os_version: el9
+  arch_type: x86_64
+  bin_type: rpm
+  db_name: pgsql_testdb
+  db_user: jomoon
+  user: postgres
+  group: postgres
+  db_password: 'changeme'
+  sudo_user_dir: "/home/jomoon"
+  home_dir: "/home/postgres"
+  base_dir: "/var/lib/pgsql"
+  domain: "jtest.ddn.com"
+  repo_url: ""
+  download_url: ""
+  download: false
+  host_num: "{{ groups['all'] | length }}"
+  base_path: /root
+  enable_ssl: true
+  # with_patroni_pkg: True
+  net:
+    type: "virtual"                # Or Physical
+    gateway: "192.168.0.1"
+    ipaddr0: "192.168.0.2"
+    ipaddr1: "192.168.1.2"
+    ipaddr2: "192.168.2.2"
+  client:
+    net:
+      type: "virtual"              # Or Physical
+      cores: 1
+      ipaddr0: "192.168.0.2"
+      ipaddr1: "192.168.1.2"
+      ipaddr2: "192.168.2.2"
+  debug_opt: ""  # --debug
+
+
+common:
+  sudo_user: jomoon
+  sudo_group: jomoon
+  sudo_user_home_dir: "/home/jomoon"
+  pgsql_bin_dir: "/usr/pgsql-{{ pgsql.major_version }}/bin"
+  pgsql_pkg_name: "vmware-postgres{{ pgsql.major_version }}"
+  # pgsql_bin_dir: "/opt/vmware/postgres/{{ pgsql.major_version }}/bin"
+  # pgsql_pkg_name: pivotal-postgres
+
+

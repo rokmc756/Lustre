@@ -1,0 +1,10 @@
+---
+- hosts: lmtdb
+  # strategy: free
+  gather_facts: yes
+  become: yes
+  vars:
+    print_debug: true
+  roles:
+    - { role: temp }
+

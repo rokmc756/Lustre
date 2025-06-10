@@ -41,6 +41,7 @@ download:
 	@if [ "${*}" = "hosts" ]; then\
 		ln -sf ansible-hosts-rk9 ansible-hosts;\
 		cp setup-hosts.yml.tmp setup-hosts.yml;\
+		cat setup-temp.yml.tmp | sed -e 's/temp/${*}/g' > setup-${*}.yml;\
 	elif [ "${*}" != "hosts" ]; then\
 		ln -sf ansible-hosts-rk9 ansible-hosts;\
 		cat setup-temp.yml.tmp | sed -e 's/temp/${*}/g' > setup-${*}.yml;\

@@ -63,12 +63,12 @@
 
 - name: Rebuild Init RAM Disk
   shell:
-    dracut  -f --regenerate-all
+    dracut -f --regenerate-all
 
 
 - name: Save Lustre Kernel Module
   template:
-    src: "{{ item.name }}.conf.j2"
+    src: "{{ item.fn }}.conf.j2"
     dest: "{{ item.dst }}"
     mode: 0644
   with_items:
