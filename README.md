@@ -188,7 +188,16 @@ make lustre r=install s=client
 
 ## Reference
 - https://metebalci.com/blog/lustre-2.15.4-on-rhel-8.9-and-ubuntu-22.04/
+- https://www.admin-magazine.com/HPC/Articles/Working-with-the-Lustre-Filesystem
+- https://wiki.lustre.org/KVM_Quick_Start_Guide
 - https://cjy2181.tistory.com/5
+- https://workspace.onionmixer.net/wiki/Service_servers
+- https://blog.naver.com/skauter/10172784510
+- https://gist.github.com/dleske/743f9dafc212b7bb0edce370e961b99e
 - https://techcommunity.microsoft.com/blog/azurehighperformancecomputingblog/parallel-virtual-file-systems-on-microsoft-azure---part-2-lustre-on-azure/306524
 - https://github.com/storagebit/lure
+- https://nischay.pro/blog/lustre-client-setup/
+- https://linuxclustersinstitute.org/wp-content/uploads/2021/08/Storage08-Lustre.pdf
+- https://info.ornl.gov/sites/publications/Files/Pub166872.pdf
+
 
