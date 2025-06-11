@@ -1,0 +1,25 @@
+#---
+#- name: Test ssh connection for users
+#  command: sshpass -p {{ item.value }} ssh {{ item.key }}@your-host 'echo success'
+
+
+- name: Configure LNET
+  template:
+    src: lnet.conf.j2
+    dest: /etc/lnet.conf
+  register: config_lnet
+  until: config_lnet is succeeded
+  retries: 20
+  delay: 10
+
+
+- name: Enable and Start LNET
+  service:
+    name: lnet
+    state: started
+    enabled: true
+  register: enable_lnet
+  until: enable_lnet is succeeded
+  retries: 3
+  delay: 10
+

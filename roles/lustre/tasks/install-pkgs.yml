@@ -1,6 +1,6 @@
 ---
 #- name: Install Kernel Headers
-#  yum:
+#  package:
 #    name: "lustre-all-dkms-{{ lustre_version }}"
 #    state: present
 #  register: install_lustre_all_dkms
@@ -8,7 +8,7 @@
 
 
 - name: Install Lustre Kernel Module
-  yum:
+  package:
     name: "kmod-lustre-{{ lustre_version }},kmod-lustre-devel-{{ lustre_version }}"
     state: present
   register: install_lustre_kernel_module
@@ -16,7 +16,7 @@
 
 
 - name: Install Lustre Packages
-  yum:
+  package:
     name: "lustre-{{ lustre_version }}"
     state: present
   register: install_lustre_pkgs
@@ -30,11 +30,11 @@
     state: present
   register: install_kernel_header
   when: inventory_hostname in groups['client']
-  # EPEL needed to install dkms
+  # EPEL needed to install DKMS
 
 
 - name: Install Lustre Client Kernel Module
-  yum:
+  package:
     name: "kmod-lustre-client-{{ lustre_version }}"
     state: present
   register: install_lustre_client_kmods
@@ -42,7 +42,7 @@
 
 
 - name: Install Lustre Client
-  yum:
+  package:
     name: "lustre-client-{{ lustre_version }}"
     state: present
   register: install_lustre_client
@@ -51,8 +51,11 @@
 
 - name: Add Lustre Kernel Module
   modprobe:
-    name: lustre
+    name: "{{ item }}"
     state: present
+  with_items:
+    - lustre
+  # - zfs
 
 
 - name: Put SELinux in permissive mode, logging actions that would be blocked.

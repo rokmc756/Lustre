@@ -67,4 +67,5 @@
   modprobe:
     name: lustre
     state: absent
+  ignore_errors: true
 

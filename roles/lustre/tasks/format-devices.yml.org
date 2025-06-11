@@ -7,6 +7,7 @@
 
 - name: Format MGTs
   shell: |
+    dd if=/dev/zero of=/dev/{{ item.dev }} bs=1024 count=1000
     /usr/sbin/mkfs.lustre --reformat --mgs {{ item.dev_prefix }}/{{ item.dev }}
   register: format_mgs
   loop: "{{ _cluster.mgs }}"
@@ -15,6 +16,7 @@
 
 - name: Format MDTs
   shell: |
+    dd if=/dev/zero of=/dev/{{ item.dev }} bs=1024 count=1000
     /usr/sbin/mkfs.lustre --reformat --mdt --fsname={{ item.fs }} --index={{ item.idx_id }} \
     --mgsnode={{ hostvars[groups['mgs'][0]]['ansible_ssh_host'] }}{{ item.lnet_suffix }} \
     {{ item.dev_prefix }}/{{ item.dev }}
@@ -27,6 +29,7 @@
 
 - name: Format OSTs
   shell: |
+    dd if=/dev/zero of=/dev/{{ item.dev }} bs=1024 count=1000
     /usr/sbin/mkfs.lustre --reformat --ost --fsname={{ item.fs }} --index={{ item.idx_id }} \
     --mgsnode={{ hostvars[groups['mgs'][0]]['ansible_ssh_host'] }}{{ item.lnet_suffix }} \
     {{ item.dev_prefix }}/{{ item.dev }}
@@ -35,5 +38,4 @@
   retries: 5
   loop: "{{ _cluster.osts }}"
   when: ( item.node == inventory_hostname ) and inventory_hostname in groups['oss']
-
 

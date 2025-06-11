@@ -3,6 +3,9 @@
   shell: |
     lnetctl ping {{ lustre_server }}
   register: lnet_ping_test_to_mgs
+  # until: lnet_ping_test_to_mgs is succeeded
+  # retries: 10
+  # delay: 10
   changed_when: False
 - debug: msg={{ lnet_ping_test_to_mgs }}
 
@@ -11,6 +14,9 @@
   shell: |
     lnetctl ping {{ _cluster.client[0].net2 }}
   register: lnet_ping_test_to_client
+  # until: lnet_ping_test_to_client is succeeded
+  # retries: 10
+  # delay: 10
   changed_when: False
 - debug: msg={{ lnet_ping_test_to_client }}
 

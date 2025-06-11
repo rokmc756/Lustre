@@ -6,61 +6,67 @@
 
 - name: Set Facts for Network and Packages Informations
   import_tasks: set-facts.yml
-  tags: install, uninstall, setup, remove, enable, disable, create, delete
+  tags: install, uninstall, setup, remove, enable, disable, create, delete, reboot
 
 
 - name: Install iSCSI Target In Less Version Than RHEL/Rocky/CentOS 8.x
   import_tasks: rh7/install-target.yml
-  tags: install, create
+  tags: create, install
   when:
-    - ( target is defined and target == true ) and inventory_hostname in groups['iscsi']
     - ( ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Rocky" ) and ansible_distribution_major_version|int < 8
-
-
-- name: Uninstall iSCSI Target In Less Version Than RHEL/Rocky/CentOS 8.x
-  import_tasks: rh7/uninstall-target.yml
-  tags: uninstall, delete
-  when:
-    - ( target is defined and target == true ) and inventory_hostname in groups['iscsi']
-    - ( ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Rocky" ) and ansible_distribution_major_version|int < 8
+    - (( target is defined and target == true ) or ( iscsi_all is defined and iscsi_all == true )) and inventory_hostname in groups['iscsi']
 
 
 - name: Install iSCSI Target In Higher Version Than RHEL/Rocky/CentOS 8.x
   import_tasks: rh8/install-target.yml
-  tags: install, create
+  tags: create, install
   when:
-    - ( target is defined and target == true ) and inventory_hostname in groups['iscsi']
     - ( ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Rocky" ) and ansible_distribution_major_version|int >= 8
-
-
-- name: Uninstall iSCSI Target In Higher Version Than RHEL/Rocky/CentOS 8.x
-  import_tasks: rh8/uninstall-target.yml
-  tags: uninstall, delete
-  when:
-    - ( target is defined and target == true ) and inventory_hostname in groups['iscsi']
-    - ( ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Rocky" ) and ansible_distribution_major_version|int >= 8
+    - (( target is defined and target == true ) or ( iscsi_all is defined and iscsi_all == true )) and inventory_hostname in groups['iscsi']
 
 
 - name: Install iSCSI Initiator
   import_tasks: install-initiator.yml
   tags: setup, create, install
-  when: ( initiator is defined and initiator == true ) and inventory_hostname in groups['cluster']
+  when: (( initiator is defined and initiator == true ) or ( iscsi_all is defined and iscsi_all == true )) and inventory_hostname in groups['cluster']
 
 
 - name: Enable Multipath
   import_tasks: mp/enable-multipath.yml
-  tags: enable, install, setup
-  when: ( multipath is defined and multipath == true ) and inventory_hostname in groups['cluster']
+  tags: enable, setup, install
+  when: (( multipath is defined and multipath == true ) or ( iscsi_all is defined and iscsi_all == true )) and inventory_hostname in groups['cluster']
 
 
 - name: Disable Multipath
   import_tasks: mp/disable-multipath.yml
-  tags: disable, uninstall, remove
-  when: ( multipath is defined and multipath == true ) and inventory_hostname in groups['cluster']
+  tags: disable, remove, uninstall
+  when: (( multipath is defined and multipath == true ) or ( iscsi_all is defined and iscsi_all == true )) and inventory_hostname in groups['cluster']
 
 
 - name: Uninstall iSCSI Initiator
   import_tasks: uninstall-initiator.yml
   tags: remove, delete, uninstall
-  when: ( initiator is defined and initiator == true ) and inventory_hostname in groups['cluster']
+  when: (( initiator is defined and initiator == true ) or ( iscsi_all is defined and iscsi_all == true )) and inventory_hostname in groups['cluster']
+
+
+- name: Uninstall iSCSI Target In Less Version Than RHEL/Rocky/CentOS 8.x
+  import_tasks: rh7/uninstall-target.yml
+  tags: delete, uninstall
+  when:
+    - ( ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Rocky" ) and ansible_distribution_major_version|int < 8
+    - (( target is defined and target == true ) or ( iscsi_all is defined and iscsi_all == true )) and inventory_hostname in groups['iscsi']
+
+
+- name: Uninstall iSCSI Target In Higher Version Than RHEL/Rocky/CentOS 8.x
+  import_tasks: rh8/uninstall-target.yml
+  tags: delete, uninstall
+  when:
+    - ( ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Rocky" ) and ansible_distribution_major_version|int >= 8
+    - (( target is defined and target == true ) or ( iscsi_all is defined and iscsi_all == true )) and inventory_hostname in groups['iscsi']
+
+
+- name: Reboot Hosts to Apply Changes
+  import_tasks: ext/reboot-hosts.yml
+  tags: reboot, uninstall
+  when: ( host is defined and host == true ) or ( iscsi_all is defined and iscsi_all == true )
 

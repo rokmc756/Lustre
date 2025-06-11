@@ -1,0 +1,29 @@
+---
+- name: Raw Format MGTs Devices
+  shell: |
+    dd if=/dev/zero of=/dev/{{ item.dev }} bs=1024 count=1000
+  register: raw_format_mgs_dev
+  loop: "{{ _cluster.mgs }}"
+  when: inventory_hostname in groups['mgs']
+
+
+- name: Raw Format MDTs Devices
+  shell: |
+    dd if=/dev/zero of=/dev/{{ item.dev }} bs=1024 count=1000
+  register: raw_format_mdt_dev
+  until: raw_format_mdt_dev is succeeded
+  retries: 5
+  loop: "{{ _cluster.mdts }}"
+  when: ( item.node == inventory_hostname ) and ( inventory_hostname in groups['mds'] or inventory_hostname in groups['dne'] )
+
+
+- name: Raw Format OSTs Devices
+  shell: |
+    dd if=/dev/zero of=/dev/{{ item.dev }} bs=1024 count=1000
+  register: raw_format_ost_dev
+  until: raw_format_ost_dev is succeeded
+  retries: 5
+  loop: "{{ _cluster.osts }}"
+  when: ( item.node == inventory_hostname ) and inventory_hostname in groups['oss']
+
+
