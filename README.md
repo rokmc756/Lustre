@@ -133,12 +133,12 @@ _lustre:
 
 When ready, run the make commands
 #### 3) Prepare Linux Hosts to install packages required and generate/exchange ssh keys among all hosts.
-Initialize Hosts
+* Initialize Hosts
 ```sh
 make hosts r=init s=all
 
 ```
-Uninitialize Hosts
+* Uninitialize Hosts
 ```sh
 make hosts r=uninit s=all
 ```
