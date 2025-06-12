@@ -164,6 +164,12 @@ make iscsi r=delete s=initiator
 make iscsi r=delete s=target
 ```
 
+
+## Enable Lustre Package Repository
+```sh
+make lustre r=enable s=repo
+```
+
 ## Install Lustre Packages
 ```sh
 make lustre r=install s=pkgs
@@ -177,6 +183,7 @@ make lustre r=test s=network
 
 ## Format and Mount Lustre Filesystem
 ```sh
+make lustre r=format s=raw
 make lustre r=format s=fs
 make lustre r=mount s=dir
 ```

@@ -7,7 +7,8 @@
 
 - name: Format MGTs
   shell: |
-    /usr/sbin/mkfs.lustre --reformat --mgs {{ item.dev_prefix }}/{{ item.dev }}
+    /usr/sbin/mkfs.lustre --reformat --fsname={{ item.fs }} --mgs --mdt \
+    --index={{ item.idx_id }} {{ item.dev_prefix }}/{{ item.dev }}
   register: format_mgs
   loop: "{{ _cluster.mgs }}"
   when: inventory_hostname in groups['mgs']

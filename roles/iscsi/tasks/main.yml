@@ -9,6 +9,12 @@
   tags: install, uninstall, setup, remove, enable, disable, create, delete, reboot
 
 
+- name: Disable Firewalld
+  import_tasks: ext/disable-firewall.yml
+  tags: disable, remove, install
+  when: ( firewall is defined and firewall == true ) or ( iscsi_all is defined and iscsi_all == true )
+
+
 - name: Install iSCSI Target In Less Version Than RHEL/Rocky/CentOS 8.x
   import_tasks: rh7/install-target.yml
   tags: create, install
@@ -65,8 +71,15 @@
     - (( target is defined and target == true ) or ( iscsi_all is defined and iscsi_all == true )) and inventory_hostname in groups['iscsi']
 
 
+- name: Enable Firewalld
+  import_tasks: ext/enable-firewall.yml
+  tags: enable, uninstall
+  when: ( firewall is defined and firewall == true ) or ( iscsi_all is defined and iscsi_all == true )
+
+
 - name: Reboot Hosts to Apply Changes
   import_tasks: ext/reboot-hosts.yml
   tags: reboot, uninstall
   when: ( host is defined and host == true ) or ( iscsi_all is defined and iscsi_all == true )
+
 

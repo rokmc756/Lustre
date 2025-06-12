@@ -3,6 +3,7 @@
   shell: |
     dd if=/dev/zero of=/dev/{{ item.dev }} bs=1024 count=1000
   register: raw_format_mgs_dev
+  ignore_errors: true
   loop: "{{ _cluster.mgs }}"
   when: inventory_hostname in groups['mgs']
 
@@ -11,6 +12,7 @@
   shell: |
     dd if=/dev/zero of=/dev/{{ item.dev }} bs=1024 count=1000
   register: raw_format_mdt_dev
+  ignore_errors: true
   until: raw_format_mdt_dev is succeeded
   retries: 5
   loop: "{{ _cluster.mdts }}"
@@ -21,6 +23,7 @@
   shell: |
     dd if=/dev/zero of=/dev/{{ item.dev }} bs=1024 count=1000
   register: raw_format_ost_dev
+  ignore_errors: true
   until: raw_format_ost_dev is succeeded
   retries: 5
   loop: "{{ _cluster.osts }}"
