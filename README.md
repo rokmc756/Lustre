@@ -31,7 +31,7 @@ If you're unfamiliar with Lustre, please refer to the
 
 ### Prepare ansible host to run this playbook
 * MacOS
-```!yaml
+```sh
 xcode-select --install
 brew install ansible
 brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
