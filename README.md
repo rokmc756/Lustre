@@ -1,4 +1,4 @@
-## What is Lustre?
+### What is Lustre?
 Lustre* is an open-source, global single-namespace, POSIX-compliant, distributed parallel file system designed for scalability, high-performance, and high-availability.
 
 Lustre runs on Linux-based operating systems and employs a client-server network architecture. Storage is provided by a set of servers that can scale to populations measuring up to several hundred hosts.
@@ -11,12 +11,12 @@ Redundant servers support storage fail-over, while metadata and data are stored 
 
 Lustre can deliver fast IO to applications across high-speed network fabrics, such as Ethernet, InfiniBand (IB), Omni-Path (OPA), and others.
 
-## Lustre Filesystem Architecture
+### Lustre Filesystem Architecture
 <p align="center">
 <img src="https://github.com/rokmc756/Lustre/blob/main/roles/lustre/images/lustre_file_system_overview_dne_lowres_v1.png" width="70%" height="70%">
 </p>
 
-## Lustre Ansible Playbook
+### Lustre Ansible Playbook
 This Ansible Playbook provides the feature to build a Lustre Filesystem on Baremetal, Virtual Machines.
 The main purposes of this project are simple to deploy Lustre Filesystem quickly and learn knowleges about it.
 If you're unfamiliar with Lustre, please refer to the
@@ -29,7 +29,7 @@ If you're unfamiliar with Lustre, please refer to the
   - At least a Normal User which has Sudo Privileges
 
 
-## Prepare ansible host to run this playbook
+### Prepare ansible host to run this playbook
 * MacOS
 ```!yaml
 $ xcode-select --install
@@ -37,23 +37,23 @@ $ brew install ansible
 $ brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
 ```
 
-## Where is it originated?
+### Where is it originated?
 It has been developing based on the following project - https://github.com/stackhpc/ansible-lustre/tree/master/ansible
 Since above project is not useful to me, I modified it with make utility.
 
 
-## Verified Lustre Version
+### Verified Lustre Version
 * Lustre 2.16.x
 
 
-## Supported Platform and OS
+### Supported Platform and OS
 * Virtual Machines
 * Baremetal
 * Rocky Linux 9.4
 
 
-## How to deply Lustre Cluster by This Ansible Playbook
-### 1) Configure Ansible Hosts
+### How to deply Lustre Cluster by This Ansible Playbook
+#### 1) Configure Ansible Hosts
 Add the target system information into the inventory file named `ansible-hosts`.
 For example:
 ```ini
@@ -95,7 +95,7 @@ rk94-node10 ansible_ssh_host=192.168.2.210
 ~~ snip
 ```
 
-### 2) Configure Global Variables
+#### 2) Configure Global Variables
 ```yaml
 $ vi group_vars/all.yaml
 
@@ -147,12 +147,12 @@ _lustre:
 ```
 
 When ready, run the make commands
-### 3) Initialize or Uninitialize Linux Host to install packages required and generate/exchange ssh keys among all hosts.
+#### 3) Initialize or Uninitialize Linux Host to install packages required and generate/exchange ssh keys among all hosts.
 ```sh
 make hosts r=init s=all          # or uninit
 ```
 
-### 4) Configure Global Variables for iSCSI Role to deploy Lustre Storage with multiple MDS ( DNE - Distributed Namespace )
+#### 4) Configure Global Variables for iSCSI Role to deploy Lustre Storage with multiple MDS ( DNE - Distributed Namespace )
 ```yaml
 ---
 _iscsi:
@@ -198,7 +198,7 @@ _iscsi:
       - { name: "jtest-vdisk082", base_dir: "/vdisk/iscsi08", size: "10G", group: "dt4", mp_alias: "dt422", iscsi_dev: "sdb", client: "rk94-node08" }
 ```
 
-### 5) Create iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
+#### 5) Create iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
 ```sh
 make iscsi r=create s=target
 make iscsi r=create s=initiator
@@ -208,7 +208,7 @@ or
 make iscsi r=install s=all
 ```
 
-### 6) Delete iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
+#### 6) Delete iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
 ```sh
 make iscsi r=disable s=multipath
 make iscsi r=delete s=initiator
@@ -218,7 +218,7 @@ or
 make iscsi r=uninstall s=all
 ```
 
-### 7) Configure Global Variables for Lustre Role to deploy Lustre Storage with multiple MDS ( DNE - Distributed Namespace )
+#### 7) Configure Global Variables for Lustre Role to deploy Lustre Storage with multiple MDS ( DNE - Distributed Namespace )
 ```yaml
 ---
 _cluster:
@@ -250,23 +250,23 @@ _cluster:
 lustre_server: "{{ _cluster.mgs[0].node }}{{ _cluster.lnet[0].suffix }}"
 ```
 
-### 8) Enable Lustre Package Repository
+#### 8) Enable Lustre Package Repository
 ```sh
 make lustre r=enable s=repo
 ```
 
-### 9) Install Lustre Packages
+#### 9) Install Lustre Packages
 ```sh
 make lustre r=install s=pkgs
 ```
 
-### 10) Enable Lustre Network
+#### 10) Enable Lustre Network
 ```sh
 make lustre r=enable s=network
 make lustre r=test s=network
 ```
 
-### 11) Format and Mount Lustre Filesystem
+#### 11) Format and Mount Lustre Filesystem
 ```sh
 make lustre r=format s=raw
 make lustre r=format s=fs
@@ -276,21 +276,21 @@ make lustre r=umount s=dir
 make lustre r=format s=raw
 ```
 
-### 12) Mount or Umount Lustre Clients
+#### 12) Mount or Umount Lustre Clients
 ```sh
 make lustre r=mount s=client
 or
 make lustre r=uumount s=client
 ```
 
-### 13) Install or Uninstall Lustre automatically at once
+#### 13) Install or Uninstall Lustre automatically at once
 ```sh
 make lustre r=install s=all
 or
 make lustre r=uninstall s=all
 ```
 
-## Reference
+### Reference
 - https://metebalci.com/blog/lustre-2.15.4-on-rhel-8.9-and-ubuntu-22.04/
 - https://www.admin-magazine.com/HPC/Articles/Working-with-the-Lustre-Filesystem
 - https://wiki.lustre.org/KVM_Quick_Start_Guide
