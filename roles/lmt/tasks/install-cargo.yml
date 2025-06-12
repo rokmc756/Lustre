@@ -1,0 +1,42 @@
+
+
+apt install -y cargo
+
+cargo --version
+
+rustc --version
+
+git clone https://github.com/whamcloud/integrated-manager-for-lustre/
+
+cd integrated-manager-for-lustre
+
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+source $HOME/.cargo/env
+```
+DATABASE_URL=postgres://jomoon@192.168.2.201:5432/pgsql_testdb
+```
+rustc --version
+
+
+vi ~/.bashrc
+export CARGO_TARGET_DIR=$HOME/cargo-target
+
+source ~/.bashrc
+
+cargo install sqlx-cli --no-default-features --features postgres
+
+sqlx --version
+
+export PATH="$HOME/.cargo/bin:$PATH"
+
+cd integrated-manager-for-lustre
+
+apt install -y pkg-config openssl libssl-dev librust-openssl-sys-dev
+
+cargo clean
+cargo build
+
+dnf install openssl-*
+
+

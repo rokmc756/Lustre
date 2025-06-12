@@ -2,7 +2,7 @@
 
 $ dnf install -y cargo
 
-$ dnf install rust-sqlx-postgres-devel
+$ dnf install rust-sqlx-postgres-devel rust-openssl-sys-devel
 
 $ git clone https://github.com/whamcloud/integrated-manager-for-lustre/
 
@@ -25,6 +25,6 @@ $ cargo install sqlx-cli
 - https://github.com/LLNL/lmt
 - https://wiki.lustre.org/Integrated_Manager_for_Lustre
 - https://docs.rs/crate/sqlx-cli/latest
-
+- https://copr.fedorainfracloud.org/coprs/managerforlustre/manager-for-lustre-6.3/
 
 
