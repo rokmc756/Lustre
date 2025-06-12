@@ -52,7 +52,7 @@ Since above project is not useful to me, I modified it with make utility.
 * Rocky Linux 9.4
 
 
-## How to Run Lustre Ansible Playbook
+## How to deply Lustre Cluster by This Ansible Playbook
 ### 1) Configure Ansible Hosts
 Add the target system information into the inventory file named `ansible-hosts`.
 For example:
@@ -146,12 +146,12 @@ _lustre:
 ```
 
 When ready, run the make commands
-## Initialize or Uninitialize Linux Host to install packages required and generate/exchange ssh keys among all hosts.
+### 3) Initialize or Uninitialize Linux Host to install packages required and generate/exchange ssh keys among all hosts.
 ```sh
 $ make hosts r=init s=all          # or uninit
 ```
 
-### 1) Configure Global Variables for iSCSI Role to deploy Lustre Storage with multiple MDS ( DNE - Distributed Namespace )
+### 4) Configure Global Variables for iSCSI Role to deploy Lustre Storage with multiple MDS ( DNE - Distributed Namespace )
 ```
 ---
 _iscsi:
@@ -197,7 +197,7 @@ _iscsi:
       - { name: "jtest-vdisk082", base_dir: "/vdisk/iscsi08", size: "10G", group: "dt4", mp_alias: "dt422", iscsi_dev: "sdb", client: "rk94-node08" }
 ```
 
-## Create iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
+### 5) Create iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
 ```sh
 $ make iscsi r=create s=target
 $ make iscsi r=create s=initiator
@@ -207,7 +207,7 @@ or
 $ make iscsi r=install s=all
 ```
 
-## Delete iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
+### 6) Delete iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
 ```sh
 $ make iscsi r=disable s=multipath
 $ make iscsi r=delete s=initiator
@@ -217,8 +217,7 @@ or
 $ make iscsi r=uninstall s=all
 ```
 
-
-### 1) Configure Global Variables for Lustre Role to deploy Lustre Storage with multiple MDS ( DNE - Distributed Namespace )
+### 7) Configure Global Variables for Lustre Role to deploy Lustre Storage with multiple MDS ( DNE - Distributed Namespace )
 ```yaml
 ---
 _cluster:
@@ -250,23 +249,23 @@ _cluster:
 lustre_server: "{{ _cluster.mgs[0].node }}{{ _cluster.lnet[0].suffix }}"
 ```
 
-## Enable Lustre Package Repository
+### 8) Enable Lustre Package Repository
 ```sh
 $ make lustre r=enable s=repo
 ```
 
-## Install Lustre Packages
+### 9) Install Lustre Packages
 ```sh
 $ make lustre r=install s=pkgs
 ```
 
-## Enable Lustre Network
+### 10) Enable Lustre Network
 ```sh
 $ make lustre r=enable s=network
 $ make lustre r=test s=network
 ```
 
-## Format and Mount Lustre Filesystem
+### 11) Format and Mount Lustre Filesystem
 ```sh
 $ make lustre r=format s=raw
 $ make lustre r=format s=fs
@@ -277,7 +276,7 @@ $ make lustre r=umount s=dir
 $ make lustre r=format s=raw
 ```
 
-## Mount or Umount Lustre Clients
+### 12) Mount or Umount Lustre Clients
 ```sh
 $ make lustre r=mount s=client
 
@@ -285,7 +284,7 @@ or
 $ make lustre r=uumount s=client
 ```
 
-## Install or Uninstall Lustre automatically at once
+### 13) Install or Uninstall Lustre automatically at once
 ```sh
 $ make lustre r=install s=all
 
