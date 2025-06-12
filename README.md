@@ -280,7 +280,7 @@ $ make lustre r=mount s=client
 ```
 * Umount Clients
 ```sh
-$ make lustre r=uumount s=client
+$ make lustre r=umount s=client
 ```
 
 #### 12) Install or Uninstall Lustre Automatically at Once
