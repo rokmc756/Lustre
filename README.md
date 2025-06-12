@@ -32,9 +32,9 @@ If you're unfamiliar with Lustre, please refer to the
 ### Prepare ansible host to run this playbook
 * MacOS
 ```!yaml
-$ xcode-select --install
-$ brew install ansible
-$ brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
+xcode-select --install
+brew install ansible
+brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
 ```
 
 ### Where is it originated?
