@@ -39,5 +39,5 @@
   register: login_target_path02
   when: item.client == inventory_hostname
   with_items: "{{ _iscsi.target.clients }}"
-  # with_items: "{{ _iscsi.target.disks }}"
+# with_items: "{{ _iscsi.target.disks }}"
 

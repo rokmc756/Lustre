@@ -9,7 +9,7 @@
   ignore_errors: true
   when: item.client == inventory_hostname
   with_items: "{{ _iscsi.target.clients }}"
-  # with_items: "{{ _iscsi.target.disks }}"
+# with_items: "{{ _iscsi.target.disks }}"
 
 
 - name: Remove Node to Prevent the Session from Re-Establishing
@@ -35,7 +35,7 @@
   ignore_errors: true
   when: item.client == inventory_hostname
   with_items: "{{ _iscsi.target.clients }}"
-  # with_items: "{{ _iscsi.target.disks }}"
+# with_items: "{{ _iscsi.target.disks }}"
 
 
 - name: Delete iSCSI Client Session Directory to Prevent Re-Establish Connection
@@ -48,5 +48,5 @@
   ignore_errors: true
   when: item.client == inventory_hostname
   with_items: "{{ _iscsi.target.clients }}"
-  # with_items: "{{ _iscsi.target.disks }}"
+# with_items: "{{ _iscsi.target.disks }}"
 

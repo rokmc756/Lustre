@@ -33,3 +33,7 @@
 #  notify: Restart Firewall
 #  when: inventory_hostname in groups['mds']
 
+
+#- name: Allow iSCSI Target Service Port
+#  firewall-cmd --add-service=iscsi-target --permanent
+

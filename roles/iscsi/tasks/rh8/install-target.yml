@@ -41,8 +41,6 @@
 # set auth password=changeme
 
 
-
-
 - name: Create an Target Disks by TargetCLI
   shell: |
     cat << EOF | targetcli
@@ -93,11 +91,4 @@
     state: started
   register: start_target_service
 - debug: msg={{ start_target_service }}
-
-
-#- name: Allow iSCSI Target Service Port
-#  firewall-cmd --add-service=iscsi-target --permanent
-
-#- name: Reload Firewalld
-#  firewall-cmd --reload
 

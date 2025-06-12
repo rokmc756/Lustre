@@ -40,3 +40,4 @@
   when: item.client == inventory_hostname
   with_items: "{{ _iscsi.target.clients }}"
 
+

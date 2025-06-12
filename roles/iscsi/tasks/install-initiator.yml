@@ -25,4 +25,3 @@
   register: attach_device_name
 # command: cat /proc/partitions
 
-

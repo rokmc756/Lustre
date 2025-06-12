@@ -89,19 +89,3 @@
   register: verify_tgtd
 - debug: msg={{ verify_tgtd }}
 
-
-#- name: Allow iSCSI Target Service Port
-#  shell: |
-#    firewall-cmd --add-service=iscsi-target --permanent
-#  ignore_errors: true
-#  register: allow_iscsi_target
-#- debug: msg={{ allow_iscsi_target }}
-
-
-#- name: Reload Firewalld
-#  shell: |
-#    firewall-cmd --reload
-#  ignore_errors: true
-#  register: reload_firewalld
-#- debug: msg={{ reload_firewalld }}
-
