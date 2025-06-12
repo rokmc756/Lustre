@@ -7,13 +7,14 @@
 
 - name: Format MGTs
   shell: |
-    /usr/sbin/mkfs.lustre --reformat --fsname={{ item.fs }} --mgs --mdt \
-    --index={{ item.idx_id }} {{ item.dev_prefix }}/{{ item.dev }}
+    /usr/sbin/mkfs.lustre --reformat --fsname={{ item.fs }} --mgs --mdt --index={{ item.idx_id }} \
+    {{ item.dev_prefix }}/{{ item.dev }}
   register: format_mgs
-  loop: "{{ _cluster.mgs }}"
+  loop: "{{ _cluster1.mgs }}"
   when: inventory_hostname in groups['mgs']
 - debug: msg="{{ format_mgs }}"
   when: inventory_hostname in groups['mgs']
+  #  --mgsnode={{ hostvars[groups['mgs'][0]]['ansible_ssh_host'] }}{{ item.lnet_suffix }} \
 
 
 - name: Format MDTs
@@ -24,7 +25,7 @@
   register: format_mdt
   until: format_mdt is succeeded
   retries: 10
-  loop: "{{ _cluster.mdts }}"
+  loop: "{{ _cluster1.mdts }}"
   when: ( item.node == inventory_hostname ) and ( inventory_hostname in groups['mds'] or inventory_hostname in groups['dne'] )
 - debug: msg="{{ format_mdt }}"
 
@@ -37,7 +38,8 @@
   register: format_ost
   until: format_ost is succeeded
   retries: 10
-  loop: "{{ _cluster.osts }}"
+  loop: "{{ _cluster1.osts }}"
   when: ( item.node == inventory_hostname ) and inventory_hostname in groups['oss']
 - debug: msg="{{ format_ost }}"
+
 

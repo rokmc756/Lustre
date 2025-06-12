@@ -3,7 +3,7 @@ _cluster:
   lnet:
     - { suffix: "@tcp2" }
   mgs:
-    - { dev_prefix: "/dev/mapper", dev: "dt111", phy_dev: "sda", mnt_dir: "/lustre/mgs", idx_id: "0", fs: "tfs1", node: "rk94-node01" }
+    - { dev_prefix: "/dev/mapper", dev: "dt111", phy_dev: "sda", mnt_dir: "/lustre/mgs0", idx_id: "0", fs: "tfs1", node: "rk94-node01" }
   mdts:
     - { dev_prefix: "/dev/mapper", dev: "dt122", phy_dev: "sda", idx_id: "1", fs: "tfs1", lnet_suffix: "@tcp2", node: "rk94-node02" }
     - { dev_prefix: "/dev/mapper", dev: "dt211", phy_dev: "sda", idx_id: "2", fs: "tfs1", lnet_suffix: "@tcp2", node: "rk94-node03" }
@@ -14,9 +14,30 @@ _cluster:
     - { dev_prefix: "/dev/mapper", dev: "dt411", phy_dev: "sda", idx_id: "6", fs: "tfs1", lnet_suffix: "@tcp2", node: "rk94-node07" }
     - { dev_prefix: "/dev/mapper", dev: "dt422", phy_dev: "sda", idx_id: "7", fs: "tfs1", lnet_suffix: "@tcp2", node: "rk94-node08" }
   client:
-    - { lnet_suffix: "@tcp2", mount_prefix: "/mnt/lustre", fs_name: "tfs1", mgsnode: "{{ hostvars[groups['mgs'][0]]['ansible_ssh_host'] }}", net2: "{{ hostvars[groups['client'][0]]['ansible_ssh_host'] }}@tcp2" }
+    - { lnet_suffix: "@tcp2", mount_prefix: "/mnt/lustre0", fs_name: "tfs1", mgsnode: "{{ hostvars[groups['mgs'][0]]['ansible_ssh_host'] }}", net2: "{{ hostvars[groups['client'][0]]['ansible_ssh_host'] }}@tcp2" }
+    # - { net2: "{{ hostvars[groups['client'][0]]['ansible_ssh_host'] }}@tcp2" }
+
+
+
+_cluster1:
+  lnet:
+    - { suffix: "@tcp2" }
+  mgs:
+    - { dev_prefix: "/dev/mapper", dev: "dt112", phy_dev: "sdb", mnt_dir: "/lustre/mgs1", idx_id: "8", fs: "tfs2", lnet_suffix: "@tcp2", node: "rk94-node01" }
+  mdts:
+    - { dev_prefix: "/dev/mapper", dev: "dt121", phy_dev: "sdb", idx_id: "9", fs: "tfs2", lnet_suffix: "@tcp2", node: "rk94-node02" }
+    - { dev_prefix: "/dev/mapper", dev: "dt212", phy_dev: "sdb", idx_id: "10", fs: "tfs2", lnet_suffix: "@tcp2", node: "rk94-node03" }
+    - { dev_prefix: "/dev/mapper", dev: "dt221", phy_dev: "sdb", idx_id: "11", fs: "tfs2", lnet_suffix: "@tcp2", node: "rk94-node04" }
+  osts:
+    - { dev_prefix: "/dev/mapper", dev: "dt312", phy_dev: "sdb", idx_id: "12", fs: "tfs2", lnet_suffix: "@tcp2", node: "rk94-node05" }
+    - { dev_prefix: "/dev/mapper", dev: "dt321", phy_dev: "sdb", idx_id: "13", fs: "tfs2", lnet_suffix: "@tcp2", node: "rk94-node06" }
+    - { dev_prefix: "/dev/mapper", dev: "dt412", phy_dev: "sdb", idx_id: "14", fs: "tfs2", lnet_suffix: "@tcp2", node: "rk94-node07" }
+    - { dev_prefix: "/dev/mapper", dev: "dt421", phy_dev: "sdb", idx_id: "15", fs: "tfs2", lnet_suffix: "@tcp2", node: "rk94-node08" }
+  client:
+    - { lnet_suffix: "@tcp2", mount_prefix: "/mnt/lustre1", fs_name: "tfs2", mgsnode: "{{ hostvars[groups['mgs'][0]]['ansible_ssh_host'] }}", net2: "{{ hostvars[groups['client'][0]]['ansible_ssh_host'] }}@tcp2" }
     # - { net2: "{{ hostvars[groups['client'][0]]['ansible_ssh_host'] }}@tcp2" }
 
 
 lustre_server: "{{ _cluster.mgs[0].node }}{{ _cluster.lnet[0].suffix }}"
+
 

@@ -4,7 +4,7 @@
     path: "{{ item.mnt_dir }}"
     state: directory
     recurse: yes
-  loop: "{{ _cluster.mgs }}"
+  loop: "{{ _cluster1.mgs }}"
   when: ( item.node == inventory_hostname ) and inventory_hostname in groups['mgs']
 
 
@@ -12,7 +12,7 @@
   shell: |
     mount -t lustre {{ item.dev_prefix }}/{{ item.dev }} {{ item.mnt_dir }}
   register: mount_mgts
-  loop: "{{ _cluster.mgs }}"
+  loop: "{{ _cluster1.mgs }}"
   when: ( item.node == inventory_hostname ) and inventory_hostname in groups['mgs']
 - debug: msg="{{ mount_mgts }}"
 
@@ -22,7 +22,7 @@
     path: /lustre/{{ item.fs }}/mdt/{{ item.dev }}
     state: directory
     recurse: yes
-  loop: "{{ _cluster.mdts }}"
+  loop: "{{ _cluster1.mdts }}"
   when: ( item.node == inventory_hostname ) and ( inventory_hostname in groups['mds'] or inventory_hostname in groups['dne'] )
 
 
@@ -30,7 +30,7 @@
   shell: |
     mount -t lustre {{ item.dev_prefix }}/{{ item.dev }} /lustre/{{ item.fs }}/mdt/{{ item.dev }}
   register: mount_mdts
-  loop: "{{ _cluster.mdts }}"
+  loop: "{{ _cluster1.mdts }}"
   when: ( item.node == inventory_hostname ) and ( inventory_hostname in groups['mds'] or inventory_hostname in groups['dne'] )
 - debug: msg="{{ mount_mdts }}"
 
@@ -40,7 +40,7 @@
     path: /lustre/{{ item.fs }}/ost/{{ item.dev }}
     state: directory
     recurse: yes
-  loop: "{{ _cluster.osts }}"
+  loop: "{{ _cluster1.osts }}"
   when: ( item.node == inventory_hostname ) and inventory_hostname in groups['oss']
 
 
@@ -48,7 +48,7 @@
   shell: |
     mount -t lustre {{ item.dev_prefix }}/{{ item.dev }} /lustre/{{ item.fs }}/ost/{{ item.dev }}
   register: mount_osts
-  loop: "{{ _cluster.osts }}"
+  loop: "{{ _cluster1.osts }}"
   when: ( item.node == inventory_hostname ) and inventory_hostname in groups['oss']
 - debug: msg="{{ mount_osts }}"
 
