@@ -32,9 +32,9 @@ If you're unfamiliar with Lustre, please refer to the
 ### Prepare ansible host to run this playbook
 * MacOS
 ```sh
-xcode-select --install
-brew install ansible
-brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
+$ xcode-select --install
+$ brew install ansible
+$ brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
 ```
 
 ### Where is it originated?
@@ -135,12 +135,12 @@ When ready, run the make commands
 #### 3) Prepare Linux Hosts to install packages required and generate/exchange ssh keys among all hosts.
 * Initialize Hosts
 ```sh
-make hosts r=init s=all
+$ make hosts r=init s=all
 
 ```
 * Uninitialize Hosts
 ```sh
-make hosts r=uninit s=all
+$ make hosts r=uninit s=all
 ```
 
 #### 4) Configure Global Variables for iSCSI to deploy Lustre Storage with DNE ( Distributed Namespace )
@@ -192,24 +192,24 @@ _iscsi:
 #### 5) Prepare or Destroy iSCSI Environment with Multipath to simulate SAN or JBOD Storage
 * Create iSCSI Target and Initiator with Multipath
 ```sh
-make iscsi r=create s=target
-make iscsi r=create s=initiator
-make iscsi r=enable s=multipath
+$ make iscsi r=create s=target
+$ make iscsi r=create s=initiator
+$ make iscsi r=enable s=multipath
 ```
 * Create iSCSI Target and Initiator at Once
 ```sh
-make iscsi r=install s=all
+$ make iscsi r=install s=all
 ```
 
 * Delete iSCSI Target and Initiator with Multipath
 ```sh
-make iscsi r=disable s=multipath
-make iscsi r=delete s=initiator
-make iscsi r=delete s=target
+$ make iscsi r=disable s=multipath
+$ make iscsi r=delete s=initiator
+$ make iscsi r=delete s=target
 ```
 * Delete iSCSI Target and Initiator at Once
 ```sh
-make iscsi r=uninstall s=all
+$ make iscsi r=uninstall s=all
 ```
 
 #### 7) Configure Global Variables for Lustre to deploy Lustre Storage with DNE ( Distributed Namespace )
@@ -246,42 +246,42 @@ lustre_server: "{{ _cluster.mgs[0].node }}{{ _cluster.lnet[0].suffix }}"
 
 #### 8) Enable Lustre Package Repository
 ```sh
-make lustre r=enable s=repo
+$ make lustre r=enable s=repo
 ```
 
 #### 9) Install Lustre Packages
 ```sh
-make lustre r=install s=pkgs
+$ make lustre r=install s=pkgs
 ```
 
 #### 10) Enable Lustre Network
 ```sh
-make lustre r=enable s=network
-make lustre r=test s=network
+$ make lustre r=enable s=network
+$ make lustre r=test s=network
 ```
 
 #### 11) Format and Mount Lustre Filesystem
 ```sh
-make lustre r=format s=raw
-make lustre r=format s=fs
-make lustre r=mount s=dir
+$ make lustre r=format s=raw
+$ make lustre r=format s=fs
+$ make lustre r=mount s=dir
 or
-make lustre r=umount s=dir
-make lustre r=format s=raw
+$ make lustre r=umount s=dir
+$ make lustre r=format s=raw
 ```
 
 #### 12) Mount or Umount Lustre Clients
 ```sh
-make lustre r=mount s=client
+$ make lustre r=mount s=client
 or
-make lustre r=uumount s=client
+$ make lustre r=uumount s=client
 ```
 
 #### 13) Install or Uninstall Lustre automatically at once
 ```sh
-make lustre r=install s=all
+$ make lustre r=install s=all
 or
-make lustre r=uninstall s=all
+$ make lustre r=uninstall s=all
 ```
 
 ### Reference
