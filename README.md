@@ -189,23 +189,34 @@ _iscsi:
       - { name: "jtest-vdisk082", base_dir: "/vdisk/iscsi08", size: "10G", group: "dt4", mp_alias: "dt422", iscsi_dev: "sdb", client: "rk94-node08" }
 ```
 
-#### 5) Create iSCSI Target and Initiator with Multipath to simulate SAN or JBOD Storage
+#### 5) Prepare or Destroy iSCSI Environment with Multipath to simulate SAN or JBOD Storage
+* Create iSCSI Target and Initiator with Multipath
 ```sh
 make iscsi r=create s=target
+```
+```sh
 make iscsi r=create s=initiator
+```
+```sh
 make iscsi r=enable s=multipath
-
-or
+```
+* Create iSCSI Target and Initiator at Once
+```sh
 make iscsi r=install s=all
 ```
 
-#### 6) Delete iSCSI Target and Initiator with Multipath to simulate SAN or JBOD Storage
+* Delete iSCSI Target and Initiator with Multipath
 ```sh
 make iscsi r=disable s=multipath
+```
+```sh
 make iscsi r=delete s=initiator
+```
+```sh
 make iscsi r=delete s=target
-
-or
+```
+* Delete iSCSI Target and Initiator at Once
+```sh
 make iscsi r=uninstall s=all
 ```
 
