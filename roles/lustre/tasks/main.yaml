@@ -63,53 +63,16 @@
   when: (( client is defined and client == true ) or ( lustre_all is defined and lustre_all == true )) and inventory_hostname in groups['client']
 
 
-- name: Raw Format Lustre Devices
-  import_tasks: format-raw-devices1.yml
-  tags: format, install
-  when: ( raw1 is defined and raw1 == true ) or ( lustre_all is defined and lustre_all == true )
-
-
-- name: Format Lustre Devices
-  import_tasks: format-devices1.yml
-  tags: format, install
-  when: ( fs1 is defined and fs1 == true ) or ( lustre_all is defined and lustre_all == true )
-
-
-- name: Mount Lustre Directories
-  import_tasks: mount-dirs1.yml
-  tags: mount, install
-  when: (( dir1 is defined and dir1 == true ) or ( lustre_all is defined and lustre_all == true )) and inventory_hostname in groups['cluster']
-
-
-- name: Mount Lustre Client
-  import_tasks: mount-client1.yml
-  tags: mount, setup, install
-  when: (( client1 is defined and client1 == true ) or ( lustre_all is defined and lustre_all == true )) and inventory_hostname in groups['client']
-
-
 - name: Umount Lustre Client
   import_tasks: umount-client.yml
   tags: umount, uninstall
   when: (( client is defined and client == true ) or ( lustre_all is defined and lustre_all == true )) and inventory_hostname in groups['client']
 
 
-- name: Umount Lustre Client
-  import_tasks: umount-client1.yml
-  tags: umount, uninstall
-  when: (( client1 is defined and client1 == true ) or ( lustre_all is defined and lustre_all == true )) and inventory_hostname in groups['client']
-
-
 - name: Umount Lustre Directories
   import_tasks: umount-dirs.yml
   tags: umount, uninstall
   when: (( dir is defined and dir == true ) or ( lustre_all is defined and lustre_all == true )) and inventory_hostname in groups['cluster']
-
-
-- name: Umount Lustre Directories
-  import_tasks: umount-dirs1.yml
-  tags: umount, uninstall
-  when: (( dir1 is defined and dir1 == true ) or ( lustre_all is defined and lustre_all == true )) and inventory_hostname in groups['cluster']
-
 
 
 - name: Disable Lustre Network
