@@ -11,7 +11,7 @@ Redundant servers support storage fail-over, while metadata and data are stored 
 
 Lustre can deliver fast IO to applications across high-speed network fabrics, such as Ethernet, InfiniBand (IB), Omni-Path (OPA), and others.
 
-### Lustre Filesystem Architecture
+### Lustre Filesystem Architecture with DNE ( Distributed Namespaces )
 <p align="center">
 <img src="https://github.com/rokmc756/Lustre/blob/main/roles/lustre/images/lustre_file_system_overview_dne_lowres_v1.png" width="70%" height="70%">
 </p>
