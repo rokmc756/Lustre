@@ -128,19 +128,6 @@ _lustre:
     ipaddr0: "192.168.0.2"
     ipaddr1: "192.168.1.2"
     ipaddr2: "192.168.2.2"
-  backend:
-    net:
-      type: "virtual"                # or physical
-      ipaddr0: "192.168.0.2"
-      ipaddr1: "192.168.1.2"
-      ipaddr2: "192.168.2.2"
-  client:
-    net:
-      type: "virtual"                # or physical
-      cores: 1
-      ipaddr0: "192.168.0.2"
-      ipaddr1: "192.168.1.2"
-      ipaddr2: "192.168.2.2"
 ~~ snip
 ```
 
