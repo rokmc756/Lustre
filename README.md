@@ -212,7 +212,7 @@ $ make iscsi r=delete s=target
 $ make iscsi r=uninstall s=all
 ```
 
-#### 7) Configure Global Variables for Lustre to deploy Lustre Storage with DNE ( Distributed Namespace )
+#### 6) Configure Global Variables for Lustre to deploy Lustre Storage with DNE ( Distributed Namespace )
 ```yaml
 ---
 _cluster:
@@ -244,43 +244,52 @@ _cluster:
 lustre_server: "{{ _cluster.mgs[0].node }}{{ _cluster.lnet[0].suffix }}"
 ```
 
-#### 8) Enable Lustre Package Repository
+#### 7) Enable Lustre Package Repository
 ```sh
 $ make lustre r=enable s=repo
 ```
 
-#### 9) Install Lustre Packages
+#### 8) Install Lustre Packages
 ```sh
 $ make lustre r=install s=pkgs
 ```
 
-#### 10) Enable Lustre Network
+#### 9) Enable and Test Lustre Network
 ```sh
 $ make lustre r=enable s=network
 $ make lustre r=test s=network
 ```
 
-#### 11) Format and Mount Lustre Filesystem
+#### 10) Format and Mount Lustre Filesystem
+* Format and Mount Filesystem
 ```sh
 $ make lustre r=format s=raw
 $ make lustre r=format s=fs
 $ make lustre r=mount s=dir
-or
+```
+* Umount and Raw Format Filesystem
+```sh
 $ make lustre r=umount s=dir
 $ make lustre r=format s=raw
 ```
 
-#### 12) Mount or Umount Lustre Clients
+#### 11) Mount or Umount Lustre Clients
+* Mount Clients
 ```sh
 $ make lustre r=mount s=client
-or
+```
+* Umount Clients
+```sh
 $ make lustre r=uumount s=client
 ```
 
-#### 13) Install or Uninstall Lustre automatically at once
+#### 12) Install or Uninstall Lustre Automatically at Once
+* Deploy Lustre Cluster at Once
 ```sh
 $ make lustre r=install s=all
-or
+```
+* Destroy Lustre Cluster at Once
+```sh
 $ make lustre r=uninstall s=all
 ```
 
