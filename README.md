@@ -62,7 +62,6 @@ ssh_key_filename="id_rsa"
 remote_machine_username="jomoon"
 remote_machine_password="changeme"
 
-
 [iscsi]
 rk94-node00 ansible_ssh_host=192.168.2.248 ansible_ssh_host1=192.168.0.248
 rk94-node99 ansible_ssh_host=192.168.2.249 ansible_ssh_host1=192.168.0.249
@@ -98,7 +97,6 @@ rk94-node10 ansible_ssh_host=192.168.2.210
 #### 2) Configure Global Variables
 ```yaml
 $ vi group_vars/all.yaml
-
 ---
 ansible_ssh_pass: "changeme"
 ansible_become_pass: "changeme"
@@ -147,12 +145,18 @@ _lustre:
 ```
 
 When ready, run the make commands
-#### 3) Initialize or Uninitialize Linux Host to install packages required and generate/exchange ssh keys among all hosts.
+#### 3) Prepare Linux Hosts to install packages required and generate/exchange ssh keys among all hosts.
+Initialize Hosts
 ```sh
-make hosts r=init s=all          # or uninit
+make hosts r=init s=all
+
+```
+Uninitialize Hosts
+```sh
+make hosts r=uninit s=all
 ```
 
-#### 4) Configure Global Variables for iSCSI Role to deploy Lustre Storage with multiple MDS ( DNE - Distributed Namespace )
+#### 4) Configure Global Variables for iSCSI to deploy Lustre Storage with DNE ( Distributed Namespace )
 ```yaml
 ---
 _iscsi:
@@ -198,7 +202,7 @@ _iscsi:
       - { name: "jtest-vdisk082", base_dir: "/vdisk/iscsi08", size: "10G", group: "dt4", mp_alias: "dt422", iscsi_dev: "sdb", client: "rk94-node08" }
 ```
 
-#### 5) Create iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
+#### 5) Create iSCSI Target and Initiator with Multipath to simulate SAN or JBOD Storage
 ```sh
 make iscsi r=create s=target
 make iscsi r=create s=initiator
@@ -208,7 +212,7 @@ or
 make iscsi r=install s=all
 ```
 
-#### 6) Delete iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
+#### 6) Delete iSCSI Target and Initiator with Multipath to simulate SAN or JBOD Storage
 ```sh
 make iscsi r=disable s=multipath
 make iscsi r=delete s=initiator
@@ -218,7 +222,7 @@ or
 make iscsi r=uninstall s=all
 ```
 
-#### 7) Configure Global Variables for Lustre Role to deploy Lustre Storage with multiple MDS ( DNE - Distributed Namespace )
+#### 7) Configure Global Variables for Lustre to deploy Lustre Storage with DNE ( Distributed Namespace )
 ```yaml
 ---
 _cluster:
