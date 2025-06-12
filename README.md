@@ -148,49 +148,149 @@ _lustre:
 When ready, run the make commands
 ## Initialize or Uninitialize Linux Host to install packages required and generate/exchange ssh keys among all hosts.
 ```sh
-make hosts r=init          # or uninit
+$ make hosts r=init s=all          # or uninit
 ```
 
-## Create or Delete iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
+### 1) Configure Global Variables for iSCSI Role to deploy Lustre Storage with multiple MDS ( DNE - Distributed Namespace )
+```
+---
+_iscsi:
+  target:
+    iqn01: "iqn.2025-04.com.ddn.jtest01"
+    iqn02: "iqn.2025-04.com.ddn.jtest02"
+    user: "iscsiadm"
+    password: "changeme"
+    os_version: "rk9"
+    disks:
+      - { name: "jtest-vdisk011", base_dir: "/vdisk/iscsi01", size: "10G", group: "dt1", mp_alias: "mgt11", iscsi_dev: "sda", client: "rk94-node01" }
+      - { name: "jtest-vdisk012", base_dir: "/vdisk/iscsi01", size: "10G", group: "dt1", mp_alias: "mgt12", iscsi_dev: "sdb", client: "rk94-node01" }
+      - { name: "jtest-vdisk021", base_dir: "/vdisk/iscsi02", size: "10G", group: "dt1", mp_alias: "mdt11", iscsi_dev: "sda", client: "rk94-node02" }
+      - { name: "jtest-vdisk022", base_dir: "/vdisk/iscsi02", size: "10G", group: "dt1", mp_alias: "mdt12", iscsi_dev: "sdb", client: "rk94-node02" }
+      - { name: "jtest-vdisk031", base_dir: "/vdisk/iscsi03", size: "10G", group: "dt2", mp_alias: "mdt21", iscsi_dev: "sda", client: "rk94-node03" }
+      - { name: "jtest-vdisk032", base_dir: "/vdisk/iscsi03", size: "10G", group: "dt2", mp_alias: "mdt22", iscsi_dev: "sdb", client: "rk94-node03" }
+      - { name: "jtest-vdisk041", base_dir: "/vdisk/iscsi04", size: "10G", group: "dt2", mp_alias: "mdt31", iscsi_dev: "sda", client: "rk94-node04" }
+      - { name: "jtest-vdisk042", base_dir: "/vdisk/iscsi04", size: "10G", group: "dt2", mp_alias: "mdt32", iscsi_dev: "sdb", client: "rk94-node04" }
+      - { name: "jtest-vdisk051", base_dir: "/vdisk/iscsi05", size: "10G", group: "dt3", mp_alias: "ost11", iscsi_dev: "sda", client: "rk94-node05" }
+      - { name: "jtest-vdisk052", base_dir: "/vdisk/iscsi05", size: "10G", group: "dt3", mp_alias: "ost12", iscsi_dev: "sdb", client: "rk94-node05" }
+      - { name: "jtest-vdisk061", base_dir: "/vdisk/iscsi06", size: "10G", group: "dt3", mp_alias: "ost21", iscsi_dev: "sda", client: "rk94-node06" }
+      - { name: "jtest-vdisk062", base_dir: "/vdisk/iscsi06", size: "10G", group: "dt3", mp_alias: "ost22", iscsi_dev: "sdb", client: "rk94-node06" }
+      - { name: "jtest-vdisk071", base_dir: "/vdisk/iscsi07", size: "10G", group: "dt4", mp_alias: "ost31", iscsi_dev: "sda", client: "rk94-node07" }
+      - { name: "jtest-vdisk072", base_dir: "/vdisk/iscsi07", size: "10G", group: "dt4", mp_alias: "ost32", iscsi_dev: "sdb", client: "rk94-node07" }
+      - { name: "jtest-vdisk081", base_dir: "/vdisk/iscsi08", size: "10G", group: "dt4", mp_alias: "ost41", iscsi_dev: "sda", client: "rk94-node08" }
+      - { name: "jtest-vdisk082", base_dir: "/vdisk/iscsi08", size: "10G", group: "dt4", mp_alias: "ost42", iscsi_dev: "sdb", client: "rk94-node08" }
+    clients:
+      - { name: "jtest-vdisk011", base_dir: "/vdisk/iscsi01", size: "10G", group: "dt1", mp_alias: "dt111", iscsi_dev: "sda", client: "rk94-node01" }
+      - { name: "jtest-vdisk021", base_dir: "/vdisk/iscsi02", size: "10G", group: "dt1", mp_alias: "dt121", iscsi_dev: "sda", client: "rk94-node02" }
+      - { name: "jtest-vdisk012", base_dir: "/vdisk/iscsi01", size: "10G", group: "dt1", mp_alias: "dt112", iscsi_dev: "sdb", client: "rk94-node01" }
+      - { name: "jtest-vdisk022", base_dir: "/vdisk/iscsi02", size: "10G", group: "dt1", mp_alias: "dt122", iscsi_dev: "sdb", client: "rk94-node02" }
+      - { name: "jtest-vdisk031", base_dir: "/vdisk/iscsi03", size: "10G", group: "dt2", mp_alias: "dt211", iscsi_dev: "sda", client: "rk94-node03" }
+      - { name: "jtest-vdisk041", base_dir: "/vdisk/iscsi04", size: "10G", group: "dt2", mp_alias: "dt221", iscsi_dev: "sda", client: "rk94-node04" }
+      - { name: "jtest-vdisk032", base_dir: "/vdisk/iscsi03", size: "10G", group: "dt2", mp_alias: "dt212", iscsi_dev: "sdb", client: "rk94-node03" }
+      - { name: "jtest-vdisk042", base_dir: "/vdisk/iscsi04", size: "10G", group: "dt2", mp_alias: "dt222", iscsi_dev: "sdb", client: "rk94-node04" }
+      - { name: "jtest-vdisk051", base_dir: "/vdisk/iscsi05", size: "10G", group: "dt3", mp_alias: "dt311", iscsi_dev: "sda", client: "rk94-node05" }
+      - { name: "jtest-vdisk061", base_dir: "/vdisk/iscsi06", size: "10G", group: "dt3", mp_alias: "dt321", iscsi_dev: "sda", client: "rk94-node06" }
+      - { name: "jtest-vdisk052", base_dir: "/vdisk/iscsi05", size: "10G", group: "dt3", mp_alias: "dt312", iscsi_dev: "sdb", client: "rk94-node05" }
+      - { name: "jtest-vdisk062", base_dir: "/vdisk/iscsi06", size: "10G", group: "dt3", mp_alias: "dt322", iscsi_dev: "sdb", client: "rk94-node06" }
+      - { name: "jtest-vdisk071", base_dir: "/vdisk/iscsi07", size: "10G", group: "dt4", mp_alias: "dt411", iscsi_dev: "sda", client: "rk94-node07" }
+      - { name: "jtest-vdisk081", base_dir: "/vdisk/iscsi08", size: "10G", group: "dt4", mp_alias: "dt421", iscsi_dev: "sda", client: "rk94-node08" }
+      - { name: "jtest-vdisk072", base_dir: "/vdisk/iscsi07", size: "10G", group: "dt4", mp_alias: "dt412", iscsi_dev: "sdb", client: "rk94-node07" }
+      - { name: "jtest-vdisk082", base_dir: "/vdisk/iscsi08", size: "10G", group: "dt4", mp_alias: "dt422", iscsi_dev: "sdb", client: "rk94-node08" }
+```
+
+## Create iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
 ```sh
-make iscsi r=create s=target
-make iscsi r=create s=initiator
-make iscsi r=enable s=multipath
+$ make iscsi r=create s=target
+$ make iscsi r=create s=initiator
+$ make iscsi r=enable s=multipath
 
 or
-
-make iscsi r=disable s=multipath
-make iscsi r=delete s=initiator
-make iscsi r=delete s=target
+$ make iscsi r=install s=all
 ```
 
+## Delete iSCSI Target and Initiator with Multipath In order to simulate SAN or JBOD Storage
+```sh
+$ make iscsi r=disable s=multipath
+$ make iscsi r=delete s=initiator
+$ make iscsi r=delete s=target
+
+or
+$ make iscsi r=uninstall s=all
+```
+
+
+### 1) Configure Global Variables for Lustre Role to deploy Lustre Storage with multiple MDS ( DNE - Distributed Namespace )
+```yaml
+---
+_cluster:
+  lnet:
+    - { suffix: "@tcp2", net2: "{{ hostvars[groups['client'][0]]['ansible_ssh_host'] }}@tcp2" }
+  mgs:
+    - { dev_prefix: "/dev/mapper", dev: "dt111", phy_dev: "sda", mnt_dir: "/lustre/mgs0", idx_id: "0", fs: "tfs1", node: "rk94-node01" }
+  mdts:
+    - { dev_prefix: "/dev/mapper", dev: "dt121", phy_dev: "sda", idx_id: "1",  fs: "tfs1", lnet_suffix: "@tcp2", node: "rk94-node02" }
+    - { dev_prefix: "/dev/mapper", dev: "dt122", phy_dev: "sdb", idx_id: "0",  fs: "tfs2", lnet_suffix: "@tcp2", node: "rk94-node02" }
+    - { dev_prefix: "/dev/mapper", dev: "dt211", phy_dev: "sda", idx_id: "2",  fs: "tfs1", lnet_suffix: "@tcp2", node: "rk94-node03" }
+    - { dev_prefix: "/dev/mapper", dev: "dt212", phy_dev: "sdb", idx_id: "0",  fs: "tfs3", lnet_suffix: "@tcp2", node: "rk94-node03" }
+    - { dev_prefix: "/dev/mapper", dev: "dt221", phy_dev: "sda", idx_id: "1",  fs: "tfs2", lnet_suffix: "@tcp2", node: "rk94-node04" }
+    - { dev_prefix: "/dev/mapper", dev: "dt222", phy_dev: "sdb", idx_id: "1",  fs: "tfs3", lnet_suffix: "@tcp2", node: "rk94-node04" }
+  osts:
+    - { dev_prefix: "/dev/mapper", dev: "dt311", phy_dev: "sda", idx_id: "3",  fs: "tfs1", lnet_suffix: "@tcp2", node: "rk94-node05" }
+    - { dev_prefix: "/dev/mapper", dev: "dt312", phy_dev: "sdb", idx_id: "3",  fs: "tfs2", lnet_suffix: "@tcp2", node: "rk94-node05" }
+    - { dev_prefix: "/dev/mapper", dev: "dt321", phy_dev: "sda", idx_id: "2",  fs: "tfs3", lnet_suffix: "@tcp2", node: "rk94-node06" }
+    - { dev_prefix: "/dev/mapper", dev: "dt322", phy_dev: "sdb", idx_id: "4",  fs: "tfs1", lnet_suffix: "@tcp2", node: "rk94-node06" }
+    - { dev_prefix: "/dev/mapper", dev: "dt411", phy_dev: "sda", idx_id: "4",  fs: "tfs2", lnet_suffix: "@tcp2", node: "rk94-node07" }
+    - { dev_prefix: "/dev/mapper", dev: "dt412", phy_dev: "sdb", idx_id: "3",  fs: "tfs3", lnet_suffix: "@tcp2", node: "rk94-node07" }
+    - { dev_prefix: "/dev/mapper", dev: "dt421", phy_dev: "sda", idx_id: "5",  fs: "tfs1", lnet_suffix: "@tcp2", node: "rk94-node08" }
+    - { dev_prefix: "/dev/mapper", dev: "dt422", phy_dev: "sdb", idx_id: "5",  fs: "tfs2", lnet_suffix: "@tcp2", node: "rk94-node08" }
+  client:
+    - { lnet_suffix: "@tcp2", mount_prefix: "/mnt/lustre0", fs_name: "tfs1", mgsnode: "{{ hostvars[groups['mgs'][0]]['ansible_ssh_host'] }}", net2: "{{ hostvars[groups['client'][0]]['ansible_ssh_host'] }}@tcp2" }
+    - { lnet_suffix: "@tcp2", mount_prefix: "/mnt/lustre1", fs_name: "tfs2", mgsnode: "{{ hostvars[groups['mgs'][0]]['ansible_ssh_host'] }}", net2: "{{ hostvars[groups['client'][0]]['ansible_ssh_host'] }}@tcp2" }
+    - { lnet_suffix: "@tcp2", mount_prefix: "/mnt/lustre2", fs_name: "tfs3", mgsnode: "{{ hostvars[groups['mgs'][0]]['ansible_ssh_host'] }}", net2: "{{ hostvars[groups['client'][0]]['ansible_ssh_host'] }}@tcp2" }
+
+lustre_server: "{{ _cluster.mgs[0].node }}{{ _cluster.lnet[0].suffix }}"
+```
 
 ## Enable Lustre Package Repository
 ```sh
-make lustre r=enable s=repo
+$ make lustre r=enable s=repo
 ```
 
 ## Install Lustre Packages
 ```sh
-make lustre r=install s=pkgs
+$ make lustre r=install s=pkgs
 ```
 
-## Install Lustre Network
+## Enable Lustre Network
 ```sh
-make lustre r=enable s=network
-make lustre r=test s=network
+$ make lustre r=enable s=network
+$ make lustre r=test s=network
 ```
 
 ## Format and Mount Lustre Filesystem
 ```sh
-make lustre r=format s=raw
-make lustre r=format s=fs
-make lustre r=mount s=dir
+$ make lustre r=format s=raw
+$ make lustre r=format s=fs
+$ make lustre r=mount s=dir
+
+or
+$ make lustre r=umount s=dir
+$ make lustre r=format s=raw
 ```
 
-## Install Lustre Clients
+## Mount or Umount Lustre Clients
 ```sh
-make lustre r=install s=client
+$ make lustre r=mount s=client
+
+or
+$ make lustre r=uumount s=client
+```
+
+## Install or Uninstall Lustre automatically at once
+```sh
+$ make lustre r=install s=all
+
+or
+$ make lustre r=uninstall s=all
 ```
 
 ## Reference
@@ -206,5 +306,4 @@ make lustre r=install s=client
 - https://nischay.pro/blog/lustre-client-setup/
 - https://linuxclustersinstitute.org/wp-content/uploads/2021/08/Storage08-Lustre.pdf
 - https://info.ornl.gov/sites/publications/Files/Pub166872.pdf
-
 

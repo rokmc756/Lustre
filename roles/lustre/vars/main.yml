@@ -28,3 +28,4 @@ _cluster:
 
 lustre_server: "{{ _cluster.mgs[0].node }}{{ _cluster.lnet[0].suffix }}"
 
+
