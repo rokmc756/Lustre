@@ -293,7 +293,7 @@ $ make lustre r=install s=all
 $ make lustre r=uninstall s=all
 ```
 
-### Reference
+### References
 - https://metebalci.com/blog/lustre-2.15.4-on-rhel-8.9-and-ubuntu-22.04/
 - https://www.admin-magazine.com/HPC/Articles/Working-with-the-Lustre-Filesystem
 - https://wiki.lustre.org/KVM_Quick_Start_Guide
