@@ -193,11 +193,7 @@ _iscsi:
 * Create iSCSI Target and Initiator with Multipath
 ```sh
 make iscsi r=create s=target
-```
-```sh
 make iscsi r=create s=initiator
-```
-```sh
 make iscsi r=enable s=multipath
 ```
 * Create iSCSI Target and Initiator at Once
@@ -208,11 +204,7 @@ make iscsi r=install s=all
 * Delete iSCSI Target and Initiator with Multipath
 ```sh
 make iscsi r=disable s=multipath
-```
-```sh
 make iscsi r=delete s=initiator
-```
-```sh
 make iscsi r=delete s=target
 ```
 * Delete iSCSI Target and Initiator at Once
