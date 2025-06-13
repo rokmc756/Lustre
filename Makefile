@@ -41,15 +41,19 @@ download:
 	@if [ "${*}" = "hosts" ]; then\
 		ln -sf ansible-hosts-rk9 ansible-hosts;\
 		cp setup-hosts.yml.tmp setup-hosts.yml;\
-		cat setup-temp.yml.tmp | sed -e 's/temp/${*}/g' > setup-${*}.yml;\
-	elif [ "${*}" != "hosts" ]; then\
+	elif [ "${*}" = "lustre" ]; then\
 		ln -sf ansible-hosts-rk9 ansible-hosts;\
+		cat setup-temp.yml.tmp | sed -e 's/temp/${*}/g' > setup-${*}.yml;\
+	elif [ "${*}" = "iml" ]; then\
+		ln -sf ansible-hosts-rk9-iml ansible-hosts;\
+		cat setup-temp.yml.tmp | sed -e 's/temp/${*}/g' > setup-${*}.yml;\
+	elif [ "${*}" = "postgres" ]; then\
+		ln -sf ansible-hosts-rk9-postgres ansible-hosts;\
 		cat setup-temp.yml.tmp | sed -e 's/temp/${*}/g' > setup-${*}.yml;\
 	else\
 		echo "No actions to temp";\
 		exit;\
 	fi
-	
 	@make -f Makefile.${*} r=${r} s=${s} c=${c} USERNAME=${USERNAME}
 	@rm -f setup-${*}.yml Makefile.${*}
 

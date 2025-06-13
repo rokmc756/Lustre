@@ -1,0 +1,53 @@
+---
+- name: Check OS ( IML )
+  fail: msg="{{ ansible_distribution }} is Not Supported!"
+  when: ( ansible_distribution != 'RedHat' or ansible_distribution != 'CentOS' or ansible_distribution != 'Rocky' ) and inventory_hostname in groups['manager']
+
+
+- name: Install Chrony for NTP
+  import_tasks: setup-chrony.yml
+  tags: setup, install
+  when: (( ntp is defined and ntp == true ) or ( iml_all is defined and iml_all == true )) and inventory_hostname in groups['manager']
+
+
+- name: Disable Firewalld
+  import_tasks: disable-firewall.yml
+  tags: disable, remove, install
+  when: (( firewall is defined and firewall == true ) or ( iml_all is defined and iml_all == true )) and inventory_hostname in groups['manager']
+
+
+- name: Disable SELinux
+  import_tasks: disable-selinux.yml
+  tags: disable, remove, install
+  when: (( selinux is defined and selinux == true ) or ( iml_all is defined and iml_all == true )) and inventory_hostname in groups['manager']
+
+
+- name: Enable IML Pakcage Repo
+  import_tasks: enable-repo.yml
+  tags: enable, setup, install
+  when: (( repo is defined and repo == true ) or ( iml_all is defined and iml_all == true ))  and inventory_hostname in groups['manager']
+
+
+- name: Install IML Pakcages
+  import_tasks: install-pkgs.yml
+  tags: setup, install
+  when: (( pkgs is defined and pkgs == true ) or ( iml_all is defined and iml_all == true )) and inventory_hostname in groups['manager']
+
+
+- name: Uninstall Lus Pakcages
+  import_tasks: uninstall-pkgs.yml
+  tags: remove, uninstall
+  when: (( pkgs is defined and pkgs == true ) or ( iml_all is defined and iml_all == true ))  and inventory_hostname in groups['manager']
+
+
+- name: Disable Lustre Pakcage Repo
+  import_tasks: disable-repo.yml
+  tags: disable, uninstall
+  when: (( repo is defined and repo == true ) or ( iml_all is defined and iml_all == true )) and inventory_hostname in groups['manager']
+
+
+- name: Enable Firewalld
+  import_tasks: enable-firewall.yml
+  tags: enable, uninstall
+  when: (( firewall is defined and firewall == true ) or ( iml_all is defined and iml_all == true )) and inventory_hostname in groups['manager']
+

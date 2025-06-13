@@ -1,0 +1,41 @@
+---
+- name: Install Yum Utils
+  package:
+    name: "yum-utils"
+    state: present
+  register: install_yum_utils
+- debug: msg="{{ install_yum_utils }}"
+
+
+- name: Install IML Packages
+  package:
+    name: "{{ item }}"
+    state: present
+  register: install_iml_pkgs
+  with_items:
+    - "postgresql96-contrib,postgresql96-server,grafana-12.0.1,python2-iml-manager"
+- debug: msg="{{ install_iml_pkgs }}"
+# - "postgresql96-contrib,postgresql96-server,rpmlib,grafana-12.0.1,python2-iml-manager"
+
+
+- name: Move Postgres Data Directory
+  shell: |
+    mv /var/lib/pgsql/9.6/data /data/pgsql/data
+    ln -sf /data/pgsql/data /var/lib/pgsql/9.6/data
+  register: move_data_dir
+- debug: msg="{{ move_data_dir }}"
+
+
+# chroma-config setup
+
+
+#- name: Put SELinux in permissive mode, logging actions that would be blocked.
+#  selinux:
+#    policy: targeted
+#    state: permissive
+
+
+#- name: Reboot Hosts to Apply New Kernel
+#  import_tasks: ext/reboot-hosts.yml
+
+

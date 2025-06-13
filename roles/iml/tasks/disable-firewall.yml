@@ -1,0 +1,37 @@
+---
+#- name: Disable Firewalld Port Policy for Lustre
+#  firewalld:
+#    port: "{{ item }}/tcp"
+#    permanent: true
+#    state: disabled
+#    immediate: yes
+# ignore_errors: true
+#  with_items:
+#    - "{{ ports.mgs }}"
+#    - "{{ ports.mds }}"
+#    - "{{ ports.oss }}"
+#  notify: Restart Firewall
+
+
+#- name: Disable Firewalld Port Policy for Lustre
+#  firewalld:
+#    port: "{{ item }}/tcp"
+#    permanent: true
+#    state: disabled
+#    immediate: yes
+#  ignore_errors: true
+#  with_items:
+#    - "{{ ports.mgs }}"
+#    - "{{ ports.mds }}"
+#    - "{{ ports.oss }}"
+#  notify: Restart Firewall
+
+
+- name: Disable and Stop Firewalld
+  systemd:
+    name: firewalld
+    enabled: no
+    state: stopped
+    daemon_reload: yes
+  ignore_errors: true
+

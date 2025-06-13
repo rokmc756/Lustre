@@ -1,0 +1,35 @@
+---
+- name: Enable and Start Firewalld
+  systemd:
+    name: firewalld
+    enabled: true
+    state: started
+
+
+#- name: Set Firewalld Port Policy for Lustre
+#  firewalld:
+#    port: "{{ item }}/tcp"
+#    permanent: true
+#    state: enabled
+#    immediate: yes
+#  with_items:
+#    - "{{ ports.mgs }}"
+#    - "{{ ports.mds }}"
+#    - "{{ ports.oss }}"
+#  notify: Restart Firewall
+#  when: inventory_hostname in groups['mgs']
+
+
+#- name: Set Firewalld Port Policy for Lustre
+#  firewalld:
+#    port: "{{ item }}/tcp"
+#    permanent: true
+#    state: enabled
+#    immediate: yes
+#  with_items:
+#    - "{{ ports.mgs }}"
+#    - "{{ ports.mds }}"
+#    - "{{ ports.ost }}"
+#  notify: Restart Firewall
+#  when: inventory_hostname in groups['mds']
+
