@@ -27,6 +27,12 @@
   when: ( pkgs is defined and pkgs == true ) or ( lustre_all is defined and lustre_all == true )
 
 
+- name: Install ZFS Pakcages
+  import_tasks: install-zfs.yml
+  tags: setup, install
+  when: ( zfs is defined and zfs == true ) or ( lustre_all is defined and lustre_all == true )
+
+
 - name: Enable Lustre Network
   import_tasks: enable-network.yml
   tags: enable, setup, install
@@ -105,9 +111,9 @@
   when: ( firewall is defined and firewall == true ) or ( lustre_all is defined and lustre_all == true )
 
 
-#- name: Cleanup Devices
-#  import_tasks: cleanup-devices.yml
-#  tags: clean, uninstall
-#  when: (( dev is defined and dev == true ) or ( lustre_all is defined and lustre_all == true )) and inventory_hostname in groups['cluster']
+- name: Cleanup Devices
+  import_tasks: cleanup-devices.yml
+  tags: clean, uninstall
+  when: ( dev is defined and dev == true ) and inventory_hostname in groups['cluster']
 
 

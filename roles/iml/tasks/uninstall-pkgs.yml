@@ -1,18 +1,52 @@
 ---
+- name: Stop and Disable IML Services
+  service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+  register: stop_iml_services
+  ignore_errors: true
+  until: stop_iml_services is succeeded
+  retries: 3
+  delay: 10
+  with_items:
+    - nginx
+    - iml-snapshot
+    - iml-report
+    - iml-agent-comms
+    - iml-postoffice
+    - iml-ostpool
+    - iml-action-runner
+    - iml-ntp
+    - iml-mailbox
+    - iml-device
+    - iml-task-runner
+    - iml-api
+    - iml-journal
+    - iml-network
+    - iml-corosync
+    - iml-timer
+    - iml-warp-drive
+# - debug: msg="{{ stop_iml_services }}"
+# 5552 ?        Ssl    0:07 /bin/python /usr/share/chroma-manager/manage.py chroma_service --name=plugin_runner plugin_runner
+# - iml-stats
+
+
 - name: Stop and Disable Services
   service:
     name: "{{ item }}"
     state: stopped
     enabled: false
-  register: start_services
+  register: stop_services
   ignore_errors: true
   # until: start_services is succeeded
   # retries: 3
   # delay: 10
   with_items:
-    - "influxd"
+    - "influxdb"
+    - "grafana-server"
     - "postgresql-9.6"
-- debug: msg="{{ start_services }}"
+- debug: msg="{{ stop_services }}"
 
 
 - name: Remove Postgres Data Directory
@@ -32,7 +66,6 @@
   with_items:
     - "postgresql96-contrib,postgresql96-server,rpmlib,grafana-12.0.1,python2-iml-manager"
 - debug: msg="{{ uninstall_iml_pkgs }}"
-
 
 
 # chroma-config setup

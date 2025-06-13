@@ -4,7 +4,7 @@
     name: "yum-utils"
     state: present
   register: install_yum_utils
-- debug: msg="{{ install_yum_utils }}"
+- debug: msg={{ install_yum_utils }}
 
 
 - name: Install IML Packages
@@ -13,20 +13,35 @@
     state: present
   register: install_iml_pkgs
   with_items:
-    - "postgresql96-contrib,postgresql96-server,grafana-12.0.1,python2-iml-manager"
-- debug: msg="{{ install_iml_pkgs }}"
-# - "postgresql96-contrib,postgresql96-server,rpmlib,grafana-12.0.1,python2-iml-manager"
+    - "postgresql96-contrib,postgresql96-server,grafana-12.0.1,python2-iml-manager,cargo"
+- debug: msg={{ install_iml_pkgs }}
+# rpmlib
 
 
 - name: Move Postgres Data Directory
   shell: |
     mv /var/lib/pgsql/9.6/data /data/pgsql/data
-    ln -sf /data/pgsql/data /var/lib/pgsql/9.6/data
   register: move_data_dir
-- debug: msg="{{ move_data_dir }}"
+- debug: msg={{ move_data_dir }}
+
+
+- name: Create Symbolic Link
+  file:
+   src: "/data/pgsql/data"
+   dest: "/var/lib/pgsql/9.6/data"
+   state: link
+  register: create_symlink
+- debug: msg={{ create_symlink }}
 
 
 # chroma-config setup
+
+
+# Chroma
+# http://192.168.2.71:443
+
+# Grafana
+# https://192.168.2.71:3000
 
 
 #- name: Put SELinux in permissive mode, logging actions that would be blocked.

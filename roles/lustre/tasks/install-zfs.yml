@@ -1,4 +1,12 @@
 # yum -y install http://download.zfsonlinux.org/epel/zfs-release.el7_4.noarch.rpm
 
-http://download.zfsonlinux.org/epel/9.4/x86_64/
+- name: Enable ZFS Package Repo
+  yum_repository:
+    name: zfs-repo
+    description: lustre-client
+    file: lustre-repo
+    baseurl: "http://download.zfsonlinux.org/epel/9.4/x86_64"
+    gpgcheck: no
+  register: enable_zfs_repo
+- debug: msg={{  enable_zfs_repo }}
 

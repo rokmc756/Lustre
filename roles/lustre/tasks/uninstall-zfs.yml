@@ -1,0 +1,8 @@
+---
+- name: Disable ZFS Package Repo
+  yum_repository:
+    name: zfs-repo
+    state: absent
+  register: disable_zfs_repo
+- debug: msg={{ disable_zfs_repo }}
+

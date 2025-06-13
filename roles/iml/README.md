@@ -29,6 +29,10 @@ $ cargo install sqlx-cli
 - https://blog.naver.com/kmk1030/220712037849
 - https://github.com/lmenezes/cerebro/releases/tag/v0.9.4
 - https://support.hpe.com/hpesc/public/docDisplay?docId=a00113982en_us&page=Configure_the_LMT_GUI.html
+- https://collectl.sourceforge.net/
+- https://github.com/jhammond/lltop
+- https://github.com/LLNL/lmt/wiki/Installation
+- https://github.com/jhammond/tacc_stats
 
 
 ## Install on Centos 7
