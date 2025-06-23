@@ -41,7 +41,7 @@ download:
 	@if [ "${*}" = "hosts" ]; then\
 		ln -sf ansible-hosts-rk9 ansible-hosts;\
 		cp setup-hosts.yml.tmp setup-hosts.yml;\
-	elif [ "${*}" = "lustre" ]; then\
+	elif [ "${*}" = "lustre" ] || [ "${*}" = "iscsi" ]; then\
 		ln -sf ansible-hosts-rk9 ansible-hosts;\
 		cat setup-temp.yml.tmp | sed -e 's/temp/${*}/g' > setup-${*}.yml;\
 	elif [ "${*}" = "iml" ]; then\

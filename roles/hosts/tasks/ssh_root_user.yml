@@ -60,7 +60,7 @@
 
 - name: Generate SSH Key of Root User on Local Machine
   become_user: root
-  shell: "/usr/bin/ssh-keygen -t rsa -f ~/.ssh/{{ssh_key_filename}} -P ''"
+  shell: "/usr/bin/ssh-keygen -t rsa -f ~/.ssh/{{ ssh_key_filename }} -P ''"
   register: ssh_root_key_creation
   when:
     - ssh_root_key_file_exists_check is defined and ssh_root_key_file_exists_check.results[0].stat.exists == false and ssh_root_key_file_exists_check.results[1].stat.exists == false

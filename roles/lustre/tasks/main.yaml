@@ -116,4 +116,3 @@
   tags: clean, uninstall
   when: ( dev is defined and dev == true ) and inventory_hostname in groups['cluster']
 
-

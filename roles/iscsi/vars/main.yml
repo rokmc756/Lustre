@@ -40,4 +40,3 @@ _iscsi:
       - { name: "jtest-vdisk081", base_dir: "/vdisk/iscsi08", size: "10G", group: "dt4", mp_alias: "dt421", iscsi_dev: "sda", client: "rk94-node08" }
       - { name: "jtest-vdisk072", base_dir: "/vdisk/iscsi07", size: "10G", group: "dt4", mp_alias: "dt412", iscsi_dev: "sdb", client: "rk94-node07" }
       - { name: "jtest-vdisk082", base_dir: "/vdisk/iscsi08", size: "10G", group: "dt4", mp_alias: "dt422", iscsi_dev: "sdb", client: "rk94-node08" }
-

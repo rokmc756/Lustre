@@ -29,7 +29,7 @@
     backup: yes
   register: hosts_deleted
   ignore_errors: true
-  when: hostvars[ item ][ 'ansible_'~netdev0 ]['ipv4']['address'] is defined
+  when: hostvars[ item ][ _netdev ]['ipv4']['address'] is defined
   with_items: "{{ groups['all'] }}"
 
 
