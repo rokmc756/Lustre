@@ -21,12 +21,6 @@
   when: ( repo is defined and repo == true ) or ( lustre_all is defined and lustre_all == true )
 
 
-#- name: Install Lustre Kernel
-#  import_tasks: install-kernel.yml
-#  tags: setup, install
-#  when: ( kernel is defined and kernel == true ) or ( lustre_all is defined and lustre_all == true )
-
-
 - name: Install Lustre Pakcages
   import_tasks: install-pkgs.yml
   tags: setup, install

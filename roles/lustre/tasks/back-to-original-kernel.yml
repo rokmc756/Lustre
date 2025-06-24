@@ -33,7 +33,7 @@
   with_items:
     - "kernel-core-{{ _lustre.kernel_version }}_lustre.el9"
     - "kernel-debuginfo-common-x86_64-{{ _lustre.kernel_version }}_lustre.el9"
-    - "lustre-osd-ldiskfs-mount-{{ _lustre.lustre_version }}-1.el9"
+    - "lustre-osd-ldiskfs-mount-{{ lustre_version }}-1.el9"
 
 # To find grub boot menuentry
 # $ grubby --info=ALL
