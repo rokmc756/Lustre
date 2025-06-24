@@ -6,7 +6,7 @@
 
 - name: Set Facts for Network and Packages Informations
   import_tasks: set-facts.yml
-  tags: install, uninstall, setup, remove, enable, disable, test
+  tags: testfact, install, uninstall, setup, remove, enable, disable, test, back
 
 
 - name: Disable Firewalld
@@ -19,6 +19,12 @@
   import_tasks: enable-repo.yml
   tags: enable, setup, install
   when: ( repo is defined and repo == true ) or ( lustre_all is defined and lustre_all == true )
+
+
+#- name: Install Lustre Kernel
+#  import_tasks: install-kernel.yml
+#  tags: setup, install
+#  when: ( kernel is defined and kernel == true ) or ( lustre_all is defined and lustre_all == true )
 
 
 - name: Install Lustre Pakcages
@@ -111,8 +117,14 @@
   when: ( firewall is defined and firewall == true ) or ( lustre_all is defined and lustre_all == true )
 
 
-- name: Cleanup Devices
-  import_tasks: cleanup-devices.yml
-  tags: clean, uninstall
-  when: ( dev is defined and dev == true ) and inventory_hostname in groups['cluster']
+#- name: Cleanup Devices
+#  import_tasks: cleanup-devices.yml
+#  tags: clean, uninstall
+#when: ( dev is defined and dev == true ) and inventory_hostname in groups['cluster']
+
+
+- name: Back to Origianl Kernel
+  import_tasks: back-to-original-kernel.yml
+  tags: back, uninstall
+  when: ( original is defined and original == true ) or ( lustre_all is defined and lustre_all == true )
 

@@ -9,3 +9,13 @@
   async: 30
   poll: 0
 
+
+- name: Update GRUB
+  command: grub2-mkconfig -o /boot/grub2/grub.cfg
+  when: ansible_distribution == "CentOS" or ansible_os_family == "RedHat" or ansible_os_family == "Rocky"
+
+
+#- name: Update GRUB
+#  command: update-grub
+#  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+

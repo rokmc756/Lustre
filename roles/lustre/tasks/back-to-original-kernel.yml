@@ -1,0 +1,40 @@
+---
+- name: Unlock Kernel Version
+  shell: |
+    dnf versionlock clear kernel-*
+  register: unlock_kernel_version
+
+
+- name: Set GRUB_DEFAULT in /etc/default/grub
+  lineinfile:
+    path: "/etc/default/grub"
+    regexp: "^GRUB_DEFAULT="
+    line: "GRUB_DEFAULT=\"{{ _lustre.grub_default_entry }}\""
+    create: yes
+  register: set_grbu_default
+
+
+- name: Update GRUB
+  shell: |
+    grub2-mkconfig -o /boot/grub2/grub.cfg
+  register: update_grub
+  when: ansible_distribution == "CentOS" or ansible_os_family == "RedHat" or ansible_os_family == "Rocky"
+
+
+- name: Reboot Hosts to Apply New Kernel
+  import_tasks: ext/reboot-hosts.yml
+
+
+- name: Remove Lustre Kernel and Modules
+  package:
+    name: "{{ item }}"
+    state: absent
+  register: remove_lustre_kernel_modules
+  with_items:
+    - "kernel-core-{{ _lustre.kernel_version }}_lustre.el9"
+    - "kernel-debuginfo-common-x86_64-{{ _lustre.kernel_version }}_lustre.el9"
+    - "lustre-osd-ldiskfs-mount-{{ _lustre.lustre_version }}-1.el9"
+
+# To find grub boot menuentry
+# $ grubby --info=ALL
+

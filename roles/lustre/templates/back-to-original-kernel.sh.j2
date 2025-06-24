@@ -1,0 +1,15 @@
+rm -f /etc/grub.d/40_custom
+
+grub2-mkconfig -o /boot/grub2/grub.cfg
+
+{% if 'nvme' in _okd.coreos_dev %}
+for nb in $(echo '{{ _okd.coreos_dev }}'); do nvme format --ses=1 $nb --force ;done
+{% endif %}
+for nb in $(echo '{{ _okd.coreos_dev }}'); do wipefs -a $nb ;done
+for nb in $(echo '{{ _okd.coreos_dev }}'); do sgdisk --zap-all $nb ;done
+for nb in $(echo '{{ _okd.coreos_dev }}'); do dd if=/dev/zero of=$nb bs=10M count=10 oflag=direct,dsync ;done
+for nb in $(echo '{{ _okd.coreos_dev }}'); do blkdiscard $nb ;done
+for nb in $(echo '{{ _okd.coreos_dev }}'); do partprobe $nb ;done
+
+# reboot
+

@@ -15,7 +15,6 @@
   set_fact:
     all_net0_ipaddrs: "{{ groups['all'] | map('extract', hostvars, ['ansible_'~netdev0, 'ipv4', 'address']) | join(',') }}"
     all_net2_ipaddrs: "{{ groups['all'] | map('extract', hostvars, ['ansible_'~netdev2, 'ipv4', 'address']) | join(',') }}"
-- debug: msg={{ all_net0_ipaddrs }}
 
 
 - name: Set Default Network Device and Address
@@ -27,4 +26,15 @@
 - name: Define Fact for Lustre Version
   set_fact:
     lustre_version: "{{ _lustre.major_version }}.{{ _lustre.minor_version }}.{{ _lustre.patch_version }}"
+
+
+- name: Set Original Kernel Version
+  shell: |
+    echo $(uname -r) | rev | cut -d'.' -f3- | rev | cut -d'_' -f1
+  register: set_kernel_version
+
+
+- name: Define Fact for Kernel Version
+  set_fact:
+    original_kernel_version: "{{ set_kernel_version.stdout }}"
 

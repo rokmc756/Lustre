@@ -1,5 +1,4 @@
 ---
-# TODO: We should use the built in mount system in ansible
 - name: Umount Lustre Filesystem
   shell: |
     umount {{ item.mount_prefix }}/{{ item.fs_name }}

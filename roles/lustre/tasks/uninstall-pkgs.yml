@@ -15,22 +15,6 @@
   when: inventory_hostname in groups['client']
 
 
-#- name: Uninstall Lustre Client DKMS
-#  yum:
-#    name: "lustre-client-dkms-{{ lustre_version }}"
-#    state: absent
-#  register: uninstall_lustre_client_dkms
-#  when: inventory_hostname in groups['client']
-
-
-- name: Remove Kernel Headers Available
-  package:
-    name: kernel-devel
-    state: absent
-  register: uninstall_lustre_client_dkms
-  when: inventory_hostname in groups['client']
-
-
 - name: Uninstall Lustre Packages
   yum:
     name: "lustre-{{ lustre_version }}"
@@ -39,20 +23,12 @@
   when: inventory_hostname not in groups['client']
 
 
-- name: Uninstall Lustre Kernel Module
+- name: Uninstall Lustre Kernel Module Packages
   yum:
     name: "kmod-lustre-{{ lustre_version }},kmod-lustre-devel-{{ lustre_version }}"
     state: absent
   register: uninstall_lustre_kernel_module
   when: inventory_hostname not in groups['client']
-
-
-#- name: Uninstall Lustre All DKMS
-#  yum:
-#    name: "lustre-all-dkms-{{ lustre_version }}"
-#    state: absent
-#  register: uninstall_lustre_all_dkms
-#  when: inventory_hostname not in groups['client']
 
 
 - name: Uninstall Kernel Headers
@@ -63,9 +39,18 @@
   when: inventory_hostname not in groups['client']
 
 
-- name: Remove Lustre Kernel Module
+- name: Unload Lustre Kernel Module
   modprobe:
     name: lustre
     state: absent
   ignore_errors: true
+
+
+- name: Delete LNET Config files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "/etc/lnet.conf"
+    - "/etc/modprobe.d/lustre.conf"
 

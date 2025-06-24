@@ -12,7 +12,7 @@ _lustre:
   cluster_name: jack-kr-lustre
   major_version: "2"
   minor_version: "16"
-  patch_version: "0"
+  patch_version: "1"
   build_version: "0"
   download_url: "https://downloads.whamcloud.com/public/lustre"
   download: false
@@ -21,6 +21,9 @@ _lustre:
   admin_passwd: changeme
   bin_type: tar
   nvme: true
+  grub_default_entry: "Rocky Linux (5.14.0-427.13.1.el9_4.x86_64) 9.4 (Blue Onyx)"
+  grub_lustre_entry:  "Rocky Linux (5.14.0-427.31.1_lustre.el9.x86_64) 9.4 (Blue Onyx)"
+  kernel_version: "5.14.0-427.31.1"
   net:
     conn: "dpdk"                     # dpdk or udp
     gateway: "192.168.2.1"
@@ -78,7 +81,6 @@ pgsql:
   host_num: "{{ groups['all'] | length }}"
   base_path: /root
   enable_ssl: true
-  # with_patroni_pkg: True
   net:
     type: "virtual"                # Or Physical
     gateway: "192.168.0.1"
@@ -103,5 +105,4 @@ common:
   pgsql_pkg_name: "vmware-postgres{{ pgsql.major_version }}"
   # pgsql_bin_dir: "/opt/vmware/postgres/{{ pgsql.major_version }}/bin"
   # pgsql_pkg_name: pivotal-postgres
-
 

@@ -1,18 +1,42 @@
 ---
-#- name: Install Kernel Headers
-#  package:
-#    name: "lustre-all-dkms-{{ lustre_version }}"
-#    state: present
-#  register: install_lustre_all_dkms
-#  when: inventory_hostname not in groups['client']
+- name: Ensure Kernel Headers Available
+  package:
+    name: epel-release,python3-dnf-plugin-versionlock
+    state: present
+  register: install_kernel_header
+  when: inventory_hostname not in groups['client']
+
+
+- name: Install Kernel to Support Lustre
+  package:
+    name: "{{ item }}"
+    state: present
+  register: install_lustre_kernel_module
+  with_items:
+    - "kernel-core-{{ _lustre.kernel_version }}_lustre.el9.x86_64"
+    - "kernel-devel-{{ _lustre.kernel_version }}_lustre.el9.x86_64"
+  when: inventory_hostname not in groups['client']
+
+
+- name: Reboot Hosts to Apply New Kernel
+  import_tasks: ext/reboot-hosts.yml
+  when: inventory_hostname not in groups['client']
+
+
+- name: Lock Kernel Version
+  shell: |
+    dnf versionlock add kernel-*
+  register: lock_kernel_version
+  when: inventory_hostname not in groups['client']
 
 
 - name: Install Lustre Kernel Module
   package:
-    name: "kmod-lustre-{{ lustre_version }},kmod-lustre-devel-{{ lustre_version }}"
+    name: "kmod-lustre,kmod-lustre-devel"
     state: present
   register: install_lustre_kernel_module
   when: inventory_hostname not in groups['client']
+  # name: "kmod-lustre-{{ lustre_version }},kmod-lustre-devel-{{ lustre_version }}"
 
 
 - name: Install Lustre Packages
@@ -23,6 +47,22 @@
   when: inventory_hostname not in groups['client']
 
 
+- name: Install Lustre Kernel Module
+  package:
+    name: "lustre-osd-ldiskfs-mount"
+    state: present
+  register: install_lustre_kernel_module
+  when: inventory_hostname not in groups['client']
+  # name: "kmod-lustre-osd-zfs"
+
+
+- name: Install Lustre Filesystem Utility
+  package:
+    name: "lustre-osd-zfs-mount"
+    state: present
+  register: install_lustre_fs_util
+  when: inventory_hostname not in groups['client']
+
 
 - name: Ensure Kernel Headers Available
   package:
@@ -30,7 +70,6 @@
     state: present
   register: install_kernel_header
   when: inventory_hostname in groups['client']
-  # EPEL needed to install DKMS
 
 
 - name: Install Lustre Client Kernel Module
@@ -49,13 +88,20 @@
   when: inventory_hostname in groups['client']
 
 
-- name: Add Lustre Kernel Module
-  modprobe:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - lustre
-  # - zfs
+- name: Set GRUB_DEFAULT in /etc/default/grub
+  lineinfile:
+    path: "/etc/default/grub"
+    regexp: "^GRUB_DEFAULT="
+    line: "GRUB_DEFAULT=\"{{ _lustre.grub_lustre_entry }}\""
+    create: yes
+  register: set_grbu_default
+
+
+- name: Update GRUB
+  shell: |
+    grub2-mkconfig -o /boot/grub2/grub.cfg
+  register: update_grub
+  when: ansible_distribution == "CentOS" or ansible_os_family == "RedHat" or ansible_os_family == "Rocky"
 
 
 - name: Put SELinux in permissive mode, logging actions that would be blocked.
@@ -75,8 +121,7 @@
     dest: "{{ item.dst }}"
     mode: 0644
   with_items:
-    - { fn: "lustre", dst: "/etc/modules-load.d/lustre.conf" }
-    - { fn: "10-unsupported-modules", dst: "/etc/modprobe.d/10-unsupported-modules.conf" }
+    - { fn: "lustre", dst: "/etc/modprobe.d/lustre.conf" }
 
 
 - name: Reboot Hosts to Apply New Kernel

@@ -1,6 +1,11 @@
-#---
-#- name: Test ssh connection for users
-#  command: sshpass -p {{ item.value }} ssh {{ item.key }}@your-host 'echo success'
+---
+- name: Add Lustre Kernel Module
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - lnet
+    - lustre
 
 
 - name: Configure LNET
@@ -8,18 +13,20 @@
     src: lnet.conf.j2
     dest: /etc/lnet.conf
   register: config_lnet
-  until: config_lnet is succeeded
-  retries: 20
-  delay: 10
+
+
+- name: Remove LNET Kernel Module
+  shell: |
+    /usr/sbin/lustre_rmmod
 
 
 - name: Enable and Start LNET
   service:
     name: lnet
-    state: started
+    state: restarted
     enabled: true
-  register: enable_lnet
-  until: enable_lnet is succeeded
-  retries: 3
-  delay: 10
+    daemon-reload: yes
+  register: restart_lnet
+  until: restart_lnet is succeeded
+  retries: 10
 
