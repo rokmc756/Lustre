@@ -267,7 +267,7 @@ $ make lustre r=format s=fs
 $ make lustre r=mount s=dir
 ```
 
-#### 13) Mount or Umount Lustre Clients
+#### 13) Mount Lustre Clients
 * Mount Clients
 ```sh
 $ make lustre r=mount s=client
@@ -280,7 +280,7 @@ $ make lustre r=install s=all
 ```
 
 ### How to Destroy Lustre Cluster by This Ansible Playbook
-#### 1) Mount or Umount Lustre Clients
+#### 1) Umount Lustre Clients
 * Umount Clients
 ```sh
 $ make lustre r=umount s=client
