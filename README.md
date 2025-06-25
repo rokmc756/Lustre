@@ -52,7 +52,7 @@ Since above project is not useful to me, I modified it with make utility.
 * Rocky Linux 9.4
 
 
-### How to deply Lustre Cluster by This Ansible Playbook
+### How to Deply Lustre Cluster by This Ansible Playbook
 #### 1) Configure Ansible Hosts
 Add the target system information into the inventory file named `ansible-hosts`.
 For example:
@@ -279,7 +279,7 @@ $ make lustre r=mount s=client
 $ make lustre r=install s=all
 ```
 
-### How to destroy Lustre Cluster by This Ansible Playbook
+### How to Destroy Lustre Cluster by This Ansible Playbook
 #### 1) Mount or Umount Lustre Clients
 * Umount Clients
 ```sh
