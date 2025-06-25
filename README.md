@@ -201,17 +201,6 @@ $ make iscsi r=enable s=multipath
 $ make iscsi r=install s=all
 ```
 
-* Delete iSCSI Target and Initiator with Multipath
-```sh
-$ make iscsi r=disable s=multipath
-$ make iscsi r=delete s=initiator
-$ make iscsi r=delete s=target
-```
-* Delete iSCSI Target and Initiator at Once
-```sh
-$ make iscsi r=uninstall s=all
-```
-
 #### 6) Configure Global Variables for Lustre to deploy Lustre Storage with DNE ( Distributed Namespace )
 ```yaml
 ---
@@ -333,6 +322,18 @@ $ make lustre r=back s=original
 * Destroy Lustre Cluster at Once
 ```sh
 $ make lustre r=uninstall s=all
+```
+
+#### 9) Destroy iSCSI Environment with Multipath to simulate SAN or JBOD Storage
+* Delete iSCSI Target and Initiator with Multipath
+```sh
+$ make iscsi r=disable s=multipath
+$ make iscsi r=delete s=initiator
+$ make iscsi r=delete s=target
+```
+* Delete iSCSI Target and Initiator at Once
+```sh
+$ make iscsi r=uninstall s=all
 ```
 
 ### References
