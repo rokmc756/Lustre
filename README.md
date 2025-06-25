@@ -12,8 +12,9 @@ Redundant servers support storage fail-over, while metadata and data are stored 
 Lustre can deliver fast IO to applications across high-speed network fabrics, such as Ethernet, InfiniBand (IB), Omni-Path (OPA), and others.
 
 ### Lustre Filesystem Architecture with DNE ( Distributed Namespaces )
+
 <p align="center">
-<img src="https://github.com/rokmc756/Lustre/blob/main/roles/lustre/images/lustre_file_system_overview_dne_lowres_v1.png" width="80%" height="80%">
+<img src="https://github.com/rokmc756/Lustre/blob/main/roles/lustre/images/lustre_file_system_overview_dne_lowres_v1.png" width="90%" height="90%">
 </p>
 
 ### Lustre Ansible Playbook
@@ -191,7 +192,7 @@ _iscsi:
 
 #### iSCSI Diagram for Lustre according to above iscsi configuration
 <p align="center">
-<img src="https://github.com/rokmc756/Lustre/blob/main/roles/lustre/images/lustre-iscsi-diagram.png" width="80%" height="80%">
+<img src="https://github.com/rokmc756/Lustre/blob/main/roles/lustre/images/lustre-iscsi-diagram.png" width="100%" height="100%">
 </p>
 
 
