@@ -13,7 +13,7 @@ Lustre can deliver fast IO to applications across high-speed network fabrics, su
 
 ### Lustre Filesystem Architecture with DNE ( Distributed Namespaces )
 <p align="center">
-<img src="https://github.com/rokmc756/Lustre/blob/main/roles/lustre/images/lustre_file_system_overview_dne_lowres_v1.png" width="70%" height="70%">
+<img src="https://github.com/rokmc756/Lustre/blob/main/roles/lustre/images/lustre_file_system_overview_dne_lowres_v1.png" width="80%" height="80%">
 </p>
 
 ### Lustre Ansible Playbook
@@ -189,9 +189,9 @@ _iscsi:
       - { name: "jtest-vdisk082", base_dir: "/vdisk/iscsi08", size: "10G", group: "dt4", mp_alias: "dt422", iscsi_dev: "sdb", client: "rk94-node08" }
 ```
 
-* iSCSI Diagram for Lustre according to above iscsi configuration
+#### iSCSI Diagram for Lustre according to above iscsi configuration
 <p align="center">
-<img src="https://github.com/rokmc756/Lustre/blob/main/roles/lustre/images/lustre-iscsi-diagram.png" width="70%" height="70%">
+<img src="https://github.com/rokmc756/Lustre/blob/main/roles/lustre/images/lustre-iscsi-diagram.png" width="80%" height="80%">
 </p>
 
 
