@@ -244,50 +244,92 @@ _cluster:
 lustre_server: "{{ _cluster.mgs[0].node }}{{ _cluster.lnet[0].suffix }}"
 ```
 
-#### 7) Enable Lustre Package Repository
+#### 7) Disable Firewall
+```sh
+$ make lustre r=disable s=firewall
+```
+
+#### 8) Enable Lustre Package Repository
 ```sh
 $ make lustre r=enable s=repo
 ```
 
-#### 8) Install Lustre Packages
+#### 9) Install Lustre Kernel
+```sh
+$ make lustre r=install s=kernel
+```
+
+#### 10) Install Lustre Packages
 ```sh
 $ make lustre r=install s=pkgs
 ```
 
-#### 9) Enable and Test Lustre Network
+#### 11) Enable and Test Lustre Network
 ```sh
 $ make lustre r=enable s=network
 $ make lustre r=test s=network
 ```
 
-#### 10) Format and Mount Lustre Filesystem
+#### 12) Format and Mount Lustre Filesystem
 * Format and Mount Filesystem
 ```sh
 $ make lustre r=format s=raw
 $ make lustre r=format s=fs
 $ make lustre r=mount s=dir
 ```
+
+#### 13) Mount or Umount Lustre Clients
+* Mount Clients
+```sh
+$ make lustre r=mount s=client
+```
+
+#### 14) Install or Uninstall Lustre Automatically at Once
+* Deploy Lustre Cluster at Once
+```sh
+$ make lustre r=install s=all
+```
+
+### How to destroy Lustre Cluster by This Ansible Playbook
+#### 1) Mount or Umount Lustre Clients
+* Umount Clients
+```sh
+$ make lustre r=umount s=client
+```
+
+#### 2) Format and Umount Lustre Filesystem
 * Umount and Raw Format Filesystem
 ```sh
 $ make lustre r=umount s=dir
 $ make lustre r=format s=raw
 ```
 
-#### 11) Mount or Umount Lustre Clients
-* Mount Clients
+#### 3) Disable Lustre Network
 ```sh
-$ make lustre r=mount s=client
-```
-* Umount Clients
-```sh
-$ make lustre r=umount s=client
+$ make lustre r=disable s=network
 ```
 
-#### 12) Install or Uninstall Lustre Automatically at Once
-* Deploy Lustre Cluster at Once
+#### 4) Uninstall Lustre Packages
 ```sh
-$ make lustre r=install s=all
+$ make lustre r=uninstall s=pkgs
 ```
+
+#### 5) Disable Lustre Package Repository
+```sh
+$ make lustre r=disable s=repo
+```
+
+#### 6) Disable Firewall
+```sh
+$ make lustre r=disable s=firewall
+```
+
+#### 7) Back to Original Kernel
+```sh
+$ make lustre r=back s=original
+```
+
+#### 8) Uninstall Lustre Automatically at Once
 * Destroy Lustre Cluster at Once
 ```sh
 $ make lustre r=uninstall s=all

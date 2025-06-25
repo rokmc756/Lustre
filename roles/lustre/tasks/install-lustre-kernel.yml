@@ -1,0 +1,40 @@
+---
+- name: Ensure Kernel Headers Available
+  package:
+    name: epel-release,python3-dnf-plugin-versionlock
+    state: present
+  register: install_kernel_header
+  when: inventory_hostname not in groups['client']
+
+
+- name: Install Kernel to Support Lustre
+  package:
+    name: "{{ item }}"
+    state: present
+  register: install_lustre_kernel_module
+  with_items:
+    - "kernel-core-{{ _lustre.kernel_version }}_lustre.el9.x86_64"
+    - "kernel-devel-{{ _lustre.kernel_version }}_lustre.el9.x86_64"
+  when: inventory_hostname not in groups['client']
+
+
+- name: Reboot Hosts to Apply New Kernel
+  import_tasks: ext/reboot-hosts.yml
+  when: inventory_hostname not in groups['client']
+
+
+- name: Lock Kernel Version
+  shell: |
+    dnf versionlock add kernel-*
+  register: lock_kernel_version
+  when: inventory_hostname not in groups['client']
+
+
+- name: Install Lustre Kernel Module
+  package:
+    name: "kmod-lustre,kmod-lustre-devel"
+    state: present
+  register: install_lustre_kernel_module
+  when: inventory_hostname not in groups['client']
+  # name: "kmod-lustre-{{ lustre_version }},kmod-lustre-devel-{{ lustre_version }}"
+

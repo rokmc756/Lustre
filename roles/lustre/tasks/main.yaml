@@ -21,8 +21,14 @@
   when: ( repo is defined and repo == true ) or ( lustre_all is defined and lustre_all == true )
 
 
+- name: Install Lustre Kernel
+  import_tasks: install-lustre-kernel.yml
+  tags: setup, install
+  when: ( kernel is defined and kernel == true ) or ( lustre_all is defined and lustre_all == true )
+
+
 - name: Install Lustre Pakcages
-  import_tasks: install-pkgs.yml
+  import_tasks: install-lustre-pkgs.yml
   tags: setup, install
   when: ( pkgs is defined and pkgs == true ) or ( lustre_all is defined and lustre_all == true )
 
@@ -109,12 +115,6 @@
   import_tasks: ext/enable-firewall.yml
   tags: enable, uninstall
   when: ( firewall is defined and firewall == true ) or ( lustre_all is defined and lustre_all == true )
-
-
-#- name: Cleanup Devices
-#  import_tasks: cleanup-devices.yml
-#  tags: clean, uninstall
-#when: ( dev is defined and dev == true ) and inventory_hostname in groups['cluster']
 
 
 - name: Back to Origianl Kernel
