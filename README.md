@@ -189,6 +189,12 @@ _iscsi:
       - { name: "jtest-vdisk082", base_dir: "/vdisk/iscsi08", size: "10G", group: "dt4", mp_alias: "dt422", iscsi_dev: "sdb", client: "rk94-node08" }
 ```
 
+* iSCSI Diagram for Lustre according to above iscsi configuration
+<p align="center">
+<img src="https://github.com/rokmc756/Lustre/blob/main/roles/lustre/images/lustre-iscsi-diagram.png" width="70%" height="70%">
+</p>
+
+
 #### 5) Prepare or Destroy iSCSI Environment with Multipath to simulate SAN or JBOD Storage
 * Create iSCSI Target and Initiator with Multipath
 ```sh
